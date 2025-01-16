@@ -12,5 +12,19 @@
     "title": "About",
     "section": "",
     "text": "I am Gelo.This is the course page of ISSS608 whereby I share my hands-on Exercises,In class Exercises."
+  },
+  {
+    "objectID": "Hands-on Exercises/Hands-on Exercise 00/00.html",
+    "href": "Hands-on Exercises/Hands-on Exercise 00/00.html",
+    "title": "Hans-on Exercise 00:Working with tidyverse",
+    "section": "",
+    "text": "Getting started"
+  },
+  {
+    "objectID": "Hands-on Exercises/00.html",
+    "href": "Hands-on Exercises/00.html",
+    "title": "Hans-on Exercise 00:Working with tidyverse",
+    "section": "",
+    "text": "Getting started!\n\nLoading tidyverse onto r environment by using the code chunk below.\n\n\npacman::p_load(tidyverse)\n\n\nImporting data\nGetting started!\n\nLoading tidyverse onto r environment by using the code chunk below.\n\n\npacman::p_load(tidyverse)\n\n\nImporting data\n\n\nrealis_2019 &lt;- read.csv(\"data/REALIS2019.csv\")\n\n\n\npopdata_fat &lt;- read_csv(\"data/PopData2019_fat.csv\")\n\n3.pivoting data\n\n popdata_long &lt;- popdata_fat %&gt;%\n   pivot_longer(c(3:21),\n                 names_to =\"Age Group\", \n                 values_to =\"population\") \n\n4.export r data file(rds)\n\nwrite_rds(popdata_long,\"rds/popdata_long.rds\")"
   }
 ]

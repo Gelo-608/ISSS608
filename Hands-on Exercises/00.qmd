@@ -1,0 +1,60 @@
+---
+title: "Hans-on Exercise 00:Working with tidyverse"
+author: "BingBing Liu"
+date-modified: "last-modified"
+execute:
+  echo: true
+  eval: true
+  warning: false
+  freeze: true
+---
+
+**Getting started!**
+
+1.  Loading tidyverse onto r environment by using the code chunk below.
+
+```{r}
+pacman::p_load(tidyverse)
+```
+
+2.  Importing data
+
+    **Getting started!**
+
+    1.  Loading tidyverse onto r environment by using the code chunk below.
+
+    ```{r}
+    pacman::p_load(tidyverse)
+    ```
+
+    2.  Importing data
+
+    ```{r}
+    realis_2019 <- read.csv("data/REALIS2019.csv")
+    ```
+
+```{r}
+#| eval: FALSE
+popdata_fat <- read_csv("data/PopData2019_fat.csv")
+
+```
+
+  3.pivoting data
+
+```{r}
+#| eval: FALSE
+ popdata_long <- popdata_fat %>%
+   pivot_longer(c(3:21),
+                 names_to ="Age Group", 
+                 values_to ="population") 
+```
+4.export r data file(rds)
+```{r}
+#| eval: FALSE
+write_rds(popdata_long,"rds/popdata_long.rds")
+```
+5.
+```{r}
+#| echo: FALSE
+ popdata_long <- read_rds("rds/popdata_long.rds")
+```

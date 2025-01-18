@@ -5,15 +5,21 @@ website:
   title: "ISSS608 COURSEWORK"
   navbar:
     left:
-      - href: index.qmd
-        text: Home
-      - about.qmd
+    - text: "Hands-on Exercise"
+      menu:
+        - text: "Hands-on Exercise 0"
+          href: "Handson_Ex/handson_ex00/Hands-on_Ex00.html"
+        
+    right:
+    - href: index.qmd
+      text: Home
+    - about.qmd
+
+
 
 format:
   html:
-    theme:
-      - cosmo
-      - brand
+    theme: morph
     css: styles.css
     toc: true
 

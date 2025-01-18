@@ -8,11 +8,11 @@ website:
     - text: "Hands-on Exercise"
       menu:
         - text: "Hands-on Exercise 0"
-          href: "Handson_Ex/handson_ex00/Hands-on_Ex00.html"
+          href: "Hands-on Exercises/00.html"
         - text: "Hands-on Exercise 1"
-        href: Hands-on_Ex/Hands-on_Ex 01/site/Hands-on_Ex 01.html
+          href: "Hands-on Exercises/Hands-on Ex 01/Hands-on ex 01.html"
         
-        right:
+    right:
     - href: index.qmd
       text: Home
     - about.qmd
@@ -26,4 +26,7 @@ format:
     toc: true
 
 editor: visual
+
+
+
 

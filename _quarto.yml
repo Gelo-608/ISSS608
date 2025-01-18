@@ -15,7 +15,7 @@ website:
     right:
     - href: index.qmd
       text: Home
-    - about.qmd
+    - "about.qmd"
 
 
 

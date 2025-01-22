@@ -7,7 +7,7 @@ author: "Gelo"
 
 ### **2.1 Overview**
 
-In this chapter, we will be introduced to several ggplot2 extensions for creating more elegant and effective statistical graphics. By the end of this exercise, you will be able to:
+In this chapter, we will learn:
 
 -   control the placement of annotation on a graph by using functions provided in ggrepel package,
 

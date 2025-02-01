@@ -213,9 +213,6 @@ ggplotly(gg)
 In this sub-section, you will learn how to create an animated bubble plot by using `plot_ly()` method.
 
 ```{r}
-library(dplyr)  
-library(plotly) 
-
 bp <- globalPop %>%
   plot_ly(x = ~Old, 
           y = ~Young, 
@@ -229,9 +226,7 @@ bp <- globalPop %>%
           mode = 'markers'
           ) %>%
   layout(showlegend = FALSE)
-
 bp  
-
 ```
 
 ## 4.5 Reference

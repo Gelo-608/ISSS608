@@ -26,14 +26,12 @@ ggplot(data = exam_data,
        aes(x= RACE))+
   geom_bar()
 ```
+
 ```{r}
 ggplot(data=exam_data, 
        aes(x = MATHS)) +
   geom_dotplot(dotsize = 0.5)
 ```
-
-
-
 
 ```{r}
 ggplot(data=exam_data, 
@@ -44,15 +42,11 @@ ggplot(data=exam_data,
                      breaks = NULL)  
 ```
 
-
-
 ```{r}
 ggplot(data=exam_data, 
        aes(x = MATHS)) +
   geom_histogram()       
 ```
-
-
 
 ```{r}
 ggplot(data=exam_data, 
@@ -62,8 +56,6 @@ ggplot(data=exam_data,
                  fill="light blue")  
 ```
 
-
-
 ```{r}
 ggplot(data=exam_data, 
        aes(x= MATHS, 
@@ -72,15 +64,11 @@ ggplot(data=exam_data,
                  color="grey30")
 ```
 
-
-
-
 ```{r}
 ggplot(data=exam_data, 
        aes(x = MATHS)) +
   geom_density()           
 ```
-
 
 ```{r}
 ggplot(data=exam_data, 
@@ -110,14 +98,12 @@ ggplot(data=exam_data,
   geom_violin()
 ```
 
-
 ```{r}
 ggplot(data=exam_data, 
        aes(x= MATHS, 
            y=ENGLISH)) +
   geom_point()            
 ```
-
 
 ```{r}
 ggplot(data=exam_data, 
@@ -127,7 +113,6 @@ ggplot(data=exam_data,
   geom_point(position="jitter", 
              size = 0.5)        
 ```
-
 
 ```{r}
 ggplot(data=exam_data, 
@@ -191,7 +176,6 @@ ggplot(data=exam_data,
   geom_bar()
 ```
 
-
 ```{r}
 ggplot(data=exam_data, 
        aes(x=RACE)) +
@@ -224,8 +208,6 @@ ggplot(data=exam_data,
   theme_gray()
 ```
 
-
-
 ```{r}
 ggplot(data=exam_data, 
        aes(x=RACE)) +
@@ -234,7 +216,6 @@ ggplot(data=exam_data,
   theme_classic()
 ```
 
-
 ```{r}
 ggplot(data=exam_data, 
        aes(x=RACE)) +
@@ -242,14 +223,3 @@ ggplot(data=exam_data,
   coord_flip() +
   theme_minimal()
 ```
-
-
-
-
-
-
-
-
-
-
-

@@ -1,0 +1,226 @@
+---
+title: "Hands-on Exercise 4-2"
+author: "Gelo"
+---
+
+# **10 Visual Statistical Analysis**
+
+## **10.1 Learning Outcome**
+
+In this hands-on exercise, you will gain hands-on experience on using:
+
+-   ggstatsplot package to create visual graphics with rich statistical information,
+
+-   performance package to visualise model diagnostics, and
+
+-   parameters package to visualise model parameters
+
+## **10.2 Visual Statistical Analysis with ggstatsplot**
+
+[**ggstatsplot**](https://indrajeetpatil.github.io/ggstatsplot/index.html) ![](https://r4va.netlify.app/chap10/img/image1.jpg){width="27"} is an extension of [**ggplot2**](https://ggplot2.tidyverse.org/) package for creating graphics with details from statistical tests included in the information-rich plots themselves.
+
+## **10.3 Getting Started**
+
+### **10.3.1 Installing and launching R packages**
+
+In this exercise, **ggstatsplot** and **tidyverse** will be used.
+
+```{r}
+pacman::p_load(ggstatsplot, tidyverse)
+```
+
+### **10.3.2 Importing data**
+
+```{r}
+exam_data <- read_csv("/Users/geloliu/Gelo-608/ISSS608/Hands-on Exercises/Hands-on Ex 04/data/Exam_data.csv")
+```
+
+### **10.3.3 One-sample test: *gghistostats()*method**
+
+In the code chunk below, [*gghistostats()*](https://indrajeetpatil.github.io/ggstatsplot/reference/gghistostats.html) is used to to build an visual of one-sample test on English scores.
+
+```{r}
+set.seed(1234)
+
+gghistostats(
+  data = exam_data,
+  x = ENGLISH,
+  type = "bayes",
+  test.value = 60,
+  xlab = "English scores"
+)
+```
+
+Default information: - statistical details - Bayes Factor - sample sizes - distribution summary
+
+### **10.3.4 Unpacking the Bayes Factor**
+
+A Bayes factor is the ratio of the likelihood of one hypothesis to another, measuring the strength of evidence for one theory over another. It helps evaluate data in favor of the null hypothesis and incorporates external information. When comparing hypotheses H1 (alternative) and H0 (null), it’s often denoted as B10. The Schwarz criterion offers a simple way to approximate the Bayes Factor.
+
+### **10.3.5 How to interpret Bayes Factor**
+
+A **Bayes Factor** can be any positive number.
+
+### **10.3.6 Two-sample mean test: *ggbetweenstats()***
+
+In the code chunk below, [*ggbetweenstats()*](https://indrajeetpatil.github.io/ggstatsplot/reference/ggbetweenstats.html) is used to build a visual for two-sample mean test of Maths scores by gender.
+
+```{r}
+ggbetweenstats(
+  data = exam_data,
+  x = GENDER, 
+  y = MATHS,
+  type = "np",
+  messages = FALSE
+)
+```
+
+Default information: - statistical details - Bayes Factor - sample sizes - distribution summary
+
+### **10.3.7 Oneway ANOVA Test: *ggbetweenstats()*method**
+
+In the code chunk below, [*ggbetweenstats()*](https://indrajeetpatil.github.io/ggstatsplot/reference/ggbetweenstats.html) is used to build a visual for One-way ANOVA test on English score by race.
+
+```{r}
+ggbetweenstats( data = exam_data, x = RACE, y = ENGLISH, type = "p", mean.ci = TRUE, pairwise.comparisons = TRUE, pairwise.display = "s", p.adjust.method = "fdr", messages = FALSE )
+```
+
+-   “ns” → only non-significant
+
+-   “s” → only significant
+
+-   “all” → everything
+
+#### 10.3.7.1 ggbetweenstats - Summary of tests
+
+In this section, various statistical tests were conducted using **`ggbetweenstats`**, covering one-sample tests, two-sample mean tests, and one-way ANOVA. Different tests are applied based on the data context:
+
+-   **One-sample Test:** Utilized `gghistostats()` to compare English scores against a specific value (e.g., 60) and calculate the Bayes Factor to assess the strength of evidence for hypotheses.
+
+-   **Two-sample Mean Test:** Applied `ggbetweenstats()` to compare Math scores between genders, using a non-parametric test (Mann–Whitney U) to handle non-normal data.
+
+-   **One-way ANOVA:** Examined differences in English scores across different races using parametric ANOVA with multiple comparison adjustments (FDR method) to identify significant group differences.
+
+These methods provide comprehensive statistical insights, including p-values, effect sizes, and Bayes Factors, to support thorough data interpretation.
+
+### **10.3.8 Significant Test of Correlation: *ggscatterstats()***
+
+In the code chunk below, [*ggscatterstats()*](https://indrajeetpatil.github.io/ggstatsplot/reference/ggscatterstats.html) is used to build a visual for Significant Test of Correlation between Maths scores and English scores.
+
+```{r}
+ggscatterstats(
+  data = exam_data,
+  x = MATHS,
+  y = ENGLISH,
+  marginal = FALSE,
+  )
+```
+
+### **10.3.9 Significant Test of Association (Depedence) : *ggbarstats()* methods**
+
+In the code chunk below, the Maths scores is binned into a 4-class variable by using [*cut()*](https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/cut).
+
+```{r}
+exam1 <- exam_data %>% 
+  mutate(MATHS_bins = 
+           cut(MATHS, 
+               breaks = c(0,60,75,85,100))
+)
+```
+
+In this code chunk below [*ggbarstats()*](https://indrajeetpatil.github.io/ggstatsplot/reference/ggbarstats.html) is used to build a visual for Significant Test of Association
+
+```{r}
+ggbarstats(exam1, 
+           x = MATHS_bins, 
+           y = GENDER)
+```
+
+## **10.4 Visualising Models**
+
+In this section, you will learn how to visualise model diagnostic and model parameters by using parameters package.
+
+-   Toyota Corolla case study will be used. The purpose of study is to build a model to discover factors affecting prices of used-cars by taking into consideration a set of explanatory variables.
+
+## **10.5 Getting Started**
+
+## **10.6 Installing and loading the required libraries**
+
+```{r}
+pacman::p_load(readxl, performance, parameters, see)
+```
+
+### **10.6.1 Importing Excel file: readxl methods**
+
+In the code chunk below, [*read_xls()*](https://readxl.tidyverse.org/reference/read_excel.html) of [**readxl**](https://readxl.tidyverse.org/) package is used to import the data worksheet of `ToyotaCorolla.xls` workbook into R.
+
+```{r}
+car_resale <- read_xls("/Users/geloliu/Gelo-608/ISSS608/Hands-on Exercises/Hands-on Ex 04/data/ToyotaCorolla.xls")
+car_resale
+```
+
+Notice that the output object `car_resale` is a tibble data frame.
+
+### **10.6.2 Multiple Regression Model using lm()**
+
+The code chunk below is used to calibrate a multiple linear regression model by using *lm()* of Base Stats of R.
+
+```{r}
+model <- lm(Price ~ Age_08_04 + Mfg_Year + KM + 
+              Weight + Guarantee_Period, data = car_resale)
+model
+```
+
+### **10.6.3 Model Diagnostic: checking for multicolinearity:**
+
+In the code chunk, [*check_collinearity()*](https://easystats.github.io/performance/reference/check_collinearity.html) of [**performance**](https://easystats.github.io/performance/index.html) package.
+
+```{r}
+check_collinearity(model)
+
+```
+
+💢 can not run： check_c \<- check_collinearity(model) plot(check_c)
+
+```{r}
+model1 <- lm(Price ~ Age_08_04 + KM + 
+              Weight + Guarantee_Period, data = car_resale)
+
+check_n <- check_normality(model1)
+
+plot(check_n)
+```
+
+### **10.6.5 Model Diagnostic: Check model for homogeneity of variances**
+
+In the code chunk, [*check_heteroscedasticity()*](https://easystats.github.io/performance/reference/check_heteroscedasticity.html) of [**performance**](https://easystats.github.io/performance/index.html)package.
+
+```{r}
+check_h <- check_heteroscedasticity(model1)
+plot(check_h)
+```
+
+### **10.6.6 Model Diagnostic: Complete check**
+
+We can also perform the complete by using [*check_model()*](https://easystats.github.io/performance/reference/check_model.html).
+
+```{r}
+check_model(model1)
+```
+
+### **10.6.7 Visualising Regression Parameters: see methods**
+
+In the code below, plot() of see package and parameters() of parameters package is used to visualise the parameters of a regression model.
+
+```{r}
+plot(parameters(model1))
+```
+
+### **10.6.8 Visualising Regression Parameters: *ggcoefstats()* methods**
+
+In the code below, [*ggcoefstats()*](https://indrajeetpatil.github.io/ggstatsplot/reference/ggcoefstats.html) of ggstatsplot package to visualise the parameters of a regression model.
+
+```{r}
+ggcoefstats(model1, 
+            output = "plot")
+```

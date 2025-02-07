@@ -180,7 +180,27 @@ check_collinearity(model)
 
 ```
 
-💢 can not run： check_c \<- check_collinearity(model) plot(check_c)
+```{r}
+library(ggplot2)
+library(performance)
+check_c <- check_collinearity(model)
+
+
+vif_plot <- ggplot(check_c, aes(x = reorder(Term, VIF), y = VIF)) +
+  geom_point(aes(color = ifelse(VIF >= 10, "High (≥ 10)", "Low (< 5)")), size = 4) +
+  scale_color_manual(values = c("High (≥ 10)" = "red", "Low (< 5)" = "green")) +
+  geom_hline(yintercept = 10, linetype = "dashed", color = "red") +  
+  geom_hline(yintercept = 5, linetype = "dashed", color = "blue") +  
+  coord_flip() +
+  labs(title = "Variance Inflation Factor (VIF)",
+       subtitle = "High VIF indicates potential multicollinearity issues",
+       y = "VIF Value",
+       x = "Predictor Variables",
+       color = "VIF Level") +
+  theme_minimal()
+
+print(vif_plot)
+```
 
 ```{r}
 model1 <- lm(Price ~ Age_08_04 + KM + 

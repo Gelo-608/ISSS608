@@ -25,11 +25,19 @@ website:
           href: "Hands-on Exercises/Hands-on Ex 04/Hands-on ex 4-3.html"
         - text: "Hands-on Exercise 4-4"
           href: "Hands-on Exercises/Hands-on Ex 04/Hands-on ex 4-4.html"
+          
+          
+    - text: "In-class Exercise"
+      menu:
+        - text: "In-class Exercise 1"
+          href: "In-class ex/In-class ex04/In-class ex04.html"
    
     - text: "Take home Exercise"
       menu:
         - text: "Take-home Exercise 1"
           href: "Take home Ex/Take-home_Ex1/Take-home_Ex1.html"
+          
+    
           
     right:
     - href: index.qmd

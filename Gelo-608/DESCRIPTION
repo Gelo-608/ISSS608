@@ -1,0 +1,7 @@
+Package: Gelo-608
+Title: My R Project
+Version: 0.1.0
+Authors@R: person("Your Name", role = c("aut", "cre"))
+Description: This is my R project, not an R package.
+License: MIT
+Encoding: UTF-8

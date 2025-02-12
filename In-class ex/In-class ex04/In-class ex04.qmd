@@ -1,5 +1,6 @@
 ---
 title: "In-class Ex04"
+author: "Gelo"
 ---
 
 ```{r}

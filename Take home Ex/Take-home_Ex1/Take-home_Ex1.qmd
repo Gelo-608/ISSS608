@@ -10,3 +10,57 @@ execute:
   warning: false
   freeze: true
 ---
+
+# Data visualization on "**Ship Performance Clustering Dataset**"
+
+## 1. Import Data:
+
+```{r}
+library(tidyverse,haven)
+ship_data <- read_csv("/Users/geloliu/Gelo-608/ISSS608/Take home Ex/Take-home_Ex1/data/Ship_Performance_Dataset.csv")
+```
+
+### Check the structure of data:
+
+```{r}
+str(ship_data)
+summary(ship_data)
+head(ship_data)
+
+```
+
+### **Data cleansing**:
+
+```{r}
+ship_data <- ship_data %>% drop_na()
+ship_data <- ship_data %>% distinct()
+```
+
+## 2. Data exploration
+
+```{r}
+ship_data_filtered <- ship_data %>% select(
+
+Ship_Type
+Route_Type
+Engine_Type
+Maintenance_Status
+Speed_Over_Ground_knots
+Engine_Power_kW
+Distance_Traveled_nm
+Draft_meters
+Weather_Condition
+Cargo_Weight_tons
+Operational_Cost_USD
+Revenue_per_Voyage_USD
+Turnaround_Time_hours
+Efficiency_nm_per_kWh
+Seasonal_Impact_Score
+Weekly_Voyage_Count
+Average_Load_Percentage
+
+)
+```
+
+```{}
+```

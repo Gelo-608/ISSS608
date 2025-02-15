@@ -1,0 +1,131 @@
+---
+title: "In-class_Ex05"
+author: "Gelo"
+---
+
+## Getting Started
+
+```{r}
+pacman::p_load(tidyverse,readxl,SmartEDA,easystats,gtsummary,ggstatsplot)
+```
+
+## Importing Data
+
+```{r}
+car_resale <-
+read_xls("/Users/geloliu/Gelo-608/ISSS608/In-class ex/In-class ex05/data/ToyotaCorolla.xls")
+```
+
+```{r}
+list(car_resale)
+```
+
+```{r}
+summary(car_resale)
+```
+
+```{r}
+glimpse(car_resale)
+```
+
+## Data Overview
+
+```{r}
+car_resale %>%
+  ExpData(type = 1)
+```
+
+```{r}
+car_resale %>%
+  ExpData(type = 2)
+```
+
+```{r}
+cols <- c("Mfg_Month", "HP_Bin", "CC_bin", "Doors", "Gears", "Cylinders",
+          "Fuel_Type", "Color", "Met_Color", "Automatic", "Mfr_Guarantee",
+          "BOVAG_Guarantee", "ABS","Airbag_1", "Airbag_2", "Airco",
+          "Automatic_airco", "Boardcomputer", 
+          "CD_Player", "Central_Lock", "Powered_Windows", "Power_Steering",
+          "Radio","Mistlamps", "Sport_Model", "Backseat_Divider", "Metallic_Rim", 
+          "Radio_cassette", "Tow_Bar")
+```
+
+```{r}
+car_resale <- read_xls("/Users/geloliu/Gelo-608/ISSS608/In-class ex/In-class ex05/data/ToyotaCorolla.xls", sheet = "data") %>%
+  mutate(Id = as.character(Id)) %>%
+  mutate(across(cols, as.factor))
+```
+
+```{r}
+car_resale %>%
+  ExpNumViz(target = NULL,
+            nlim = 10,
+            Page = c(2,2))
+```
+
+```{r}
+car_resale %>%
+  ExpNumViz(target = "Price",
+            nlim = 10,
+            Page = c(2,2),
+            col = "#96C6D999")
+```
+
+```{r}
+#|fig-width: 15
+#|fig-height: 15
+
+car_resale %>%
+  ExpCatViz(target = NULL,
+            clim = 10,
+            col = "#96C6D999",
+            margin = 2,
+            Page = c(4,4),
+            sample = 16)
+```
+
+## Model 1
+
+```{r}
+model <- lm(Price ~ Age_08_04 + Mfg_Year +KM +
+              Weight + Guarantee_Period,data = car_resale)
+```
+
+```{r}
+check_collinearity(model)
+```
+
+```{r}
+check_c <- check_collinearity(model)
+plot(check_c)
+```
+
+## Model 1:
+
+```{r}
+model1 <- lm(Price ~ Age_08_04 +KM +
+              Weight + Guarantee_Period,data = car_resale)
+check_normality(model1)
+```
+
+```{r}
+p_model1 <- parameters((model1))
+```
+
+```{r}
+plot(parameters(model1))
+```
+
+```{r}
+tbl_regression(model1,
+               intercept = TRUE) %>%
+  add_glance_source_note(label = list(sigma~"/U03C3"),
+                         include = c(r.squared,adj.r.squared,
+                                     AIC,statistic,sigma)
+                         )
+```
+
+```{r}
+ggcoefstats(model1,
+            output ="plot")
+```

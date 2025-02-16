@@ -2,6 +2,7 @@
 title: "Take-home Exercise 1"
 author: "Gelo"
 date: "February 1,2025"
+Source: Ship Performance Clustering Dataset (Kaggle)
 date-modified: "last-modified"
 
 execute:
@@ -11,32 +12,464 @@ execute:
   freeze: true
 ---
 
-# Data visualization on "**Ship Performance Clustering Dataset**"
+# Data visualization based on "**Ship Performance Clustering Dataset**"
 
-## 1. Import Data:
+## Ship operation analysis report
+
+## 1. Overview
+
+## 1.1 Background
+
+Based on the **Ship Performance Clustering Dataset** for 2020-2023, this report analyzes the relationship between ship performance indicators and operational efficiency to provide support for optimizing route planning and energy consumption management.
+
+## 1.2 Dataset & associated libraries
+
+Data covering ship category, speed, fuel consumption, cargo load, maintenance status, sailing distance and other indicators.
+
+```{r}
+pacman::p_load(tidyverse,ggrepel, patchwork, ggthemes, hrbrthemes,ggiraph, plotly,readxl, 
+               gifski, gapminder,gganimate,HH,corrplot, ggstatsplot,ggExtra,FunnelPlotR, knitr,
+               ggdist, ggridges,colorspace,crosstalk, DT,SmartEDA,easystats, tidymodels,ggtern,
+               seriation, dendextend, heatmaply,GGally, parallelPlot
+               )
+```
+
+## 2. Import Data
 
 ```{r}
 library(tidyverse,haven)
 ship_data <- read_csv("/Users/geloliu/Gelo-608/ISSS608/Take home Ex/Take-home_Ex1/data/Ship_Performance_Dataset.csv")
 ```
 
-### Check the structure of data:
+## 3. Data pre-processing **& Data exploration**
+
+### **3.1 Check the structure of data**
 
 ```{r}
 str(ship_data)
-summary(ship_data)
-head(ship_data)
-
 ```
 
-### **Data cleansing**:
++----------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------+
+| **Numerical Features**                                                                       | **Categorical Features**                                                                           |
++==============================================================================================+====================================================================================================+
+| -   Speed_Over_Ground_knots: Average speed of the ship over water (in knots).                | -   Ship_Type: Type of ship (e.g., Tanker, Container Ship, Fish Carrier, Bulk Carrier).            |
+|                                                                                              |                                                                                                    |
+| -   Engine_Power_kW: Engine power output (in kilowatts).                                     | -   Route_Type: Shipping route type (e.g., Short-haul, Long-haul, Transoceanic).                   |
+|                                                                                              |                                                                                                    |
+| -   Distance_Traveled_nm: Total distance traveled by the ship (in nautical miles).           | -   Engine_Type: Type of engine (e.g., Diesel, Heavy Fuel Oil).                                    |
+|                                                                                              |                                                                                                    |
+| -   Operational_Cost_USD: Total operational cost per voyage (in USD).                        | -   Maintenance_Status: Maintenance condition of the ship (e.g., Fair, Critical, Good).            |
+|                                                                                              |                                                                                                    |
+| -   Revenue_per_Voyage_USD: Revenue generated per voyage (in USD).                           | -   Weather_Condition: Prevailing weather conditions during voyages (e.g., Calm, Moderate, Rough). |
+|                                                                                              |                                                                                                    |
+| -   Efficiency_nm_per_kWh: Energy efficiency calculated in nautical miles per kilowatt-hour. |                                                                                                    |
++----------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------+
 
 ```{r}
-ship_data <- ship_data %>% drop_na()
-ship_data <- ship_data %>% distinct()
+glimpse(ship_data)
 ```
 
-## 2. Data exploration
-
-```         
+```{r}
+summary(ship_data)
+head(ship_data)
 ```
+
+### **3.2 Data missing value**:
+
+```{r}
+colSums(is.na(ship_data))
+```
+
+### **3.3 Data exploration**
+
+```{r}
+# Count the number of different ship types
+ship_count <- ship_data %>%
+  count(Ship_Type, sort = TRUE)  
+
+p <- ggplot(ship_count, aes(x = reorder(Ship_Type, n), y = n, fill = Ship_Type)) +
+  geom_bar_interactive(stat = "identity", width = 0.6, aes(tooltip = paste0("Ship Type: ", Ship_Type, "\nCount: ", n))) +  
+  coord_flip() +
+  labs(title = "Ship Type Distribution (Interactive)", 
+       x = "Ship Type", y = "Count") +
+  theme_minimal() +
+  theme(legend.position = "bottom", legend.title = element_blank())
+
+girafe(ggobj = p, options = list(opts_hover(css = "fill:red;")))
+```
+
+```{r}
+ggplot(ship_data, aes(x = Ship_Type, y = Operational_Cost_USD, fill = Ship_Type)) +
+  geom_boxplot() +
+  labs(title = "Operating Cost by Ship Type", x = "Ship Type", y = "Cost (USD)") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+```
+
+```{r}
+ggplot(ship_data, aes(x = Engine_Power_kW, y = Speed_Over_Ground_knots, color = Ship_Type)) +
+  geom_point(alpha = 0.6) +
+  labs(title = "Engine Power vs. Speed", x = "Engine Power (kW)", y = "Speed (knots)")
+```
+
+```{r}
+ggplot(ship_data, aes(x = Ship_Type, fill = Ship_Type)) +
+  geom_bar() +
+  labs(title = "Frequency of Ship Types", x = "Ship Type", y = "Count") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+## 4. Tasks
+
+### 4.1 Fuel consumption vs operating costs at different ship types and speeds
+
+Correlation Heat Map (Heatmap)：
+
+-   To see correlations between multiple variables.
+
+```{r}
+cor_matrix <- ship_data %>%
+  dplyr::select(Speed_Over_Ground_knots, Cargo_Weight_tons, 
+                Operational_Cost_USD, Revenue_per_Voyage_USD, 
+                Efficiency_nm_per_kWh) %>%
+  cor(use = "pairwise.complete.obs")
+
+heatmaply(cor_matrix, 
+          xlab = "Variables", ylab = "Variables",
+          main = "Ship Performance Correlation Heatmap",
+          colors = colorRampPalette(c("darkred", "white", "darkblue"))(256),
+          cellnote = round(cor_matrix, 2),
+          fontsize_row = 12, fontsize_col = 12,
+          dendrogram = "none")
+```
+
+Interactive scatterplot of speed vs fuel efficiency：
+
+-   The interactive scatter plot shows that there is little difference in fuel efficiency between different ship types, and the relationship between speed and fuel efficiency is relatively stable.
+
+```{r}
+library(plotly)
+
+p <- ggplot(ship_data, aes(x = Speed_Over_Ground_knots, y = Efficiency_nm_per_kWh, 
+                           color = Ship_Type)) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method = "loess", se = FALSE) +
+  labs(title = "Interactive: Speed vs Fuel Efficiency",
+       x = "Speed (knots)", y = "Efficiency (nm per kWh)") +
+  theme_minimal()
+
+ggplotly(p)
+```
+
+Speed vs fuel efficiency correlation for different ship types:
+
+-   To analyze whether the relationship between speed and fuel efficiency is different in different ship types.
+
+```{r}
+ship_corr_by_type <- ship_data %>%
+  group_by(Ship_Type) %>%
+  summarise(correlation = cor(Speed_Over_Ground_knots, Efficiency_nm_per_kWh, use = "complete.obs"))
+
+ggplot(ship_corr_by_type, aes(x = Ship_Type, y = correlation, fill = Ship_Type)) +
+  geom_col() +
+  labs(title = "Correlation between Speed and Fuel Efficiency by Ship Type",
+       x = "Ship Type", y = "Correlation Coefficient") +
+  theme_minimal()
+
+ggplot(ship_data, aes(x = Ship_Type, y = Efficiency_nm_per_kWh, fill = Ship_Type)) +
+  geom_violin(trim = FALSE, alpha = 0.7) +
+  geom_boxplot(width = 0.2, color = "black", outlier.shape = NA, alpha = 0.5) +
+  labs(title = "Fuel Efficiency Across Different Ship Types",
+       x = "Ship Type",
+       y = "Efficiency (nm per kWh)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+Costs with speed
+
+-   Profits rise in certain speed ranges, but fall after a certain speed, which means that there may be an optimal speed.
+
+```{r}
+p1 <- ggplot(ship_data, aes(x = Speed_Over_Ground_knots, y = Operational_Cost_USD)) +
+  geom_smooth(method = "loess", color = "red", se = FALSE) +
+  labs(title = "Operational Cost vs Speed", x = "Speed (knots)", y = "Operational Cost (USD)") +
+  theme_minimal()
+
+p2 <- ggplot(ship_data, aes(x = Speed_Over_Ground_knots, y = Revenue_per_Voyage_USD)) +
+  geom_smooth(method = "loess", color = "green", se = FALSE) +
+  labs(title = "Revenue vs Speed", x = "Speed (knots)", y = "Revenue per Voyage (USD)") +
+  theme_minimal()
+
+p1 + p2
+```
+
+Optimal velocity analysis
+
+-   The optimal speed calculated by smoothing curves is ≈ 10.44 knots, at which time the profit reaches the maximum.However, the Profit-to-Cost Ratio gradually decreases with increasing speed, suggesting that higher speed, while it may bring higher total profits, is not necessarily the most economical option.
+
+```{r}
+ggplot(ship_data, aes(x = Speed_Over_Ground_knots, y = Efficiency_nm_per_kWh)) +
+  geom_point(alpha = 0.3, color = "blue") +
+  geom_smooth(method = "loess", se = TRUE, color = "red") +
+  labs(title = "Optimal Speed for Fuel Efficiency",
+       x = "Speed (knots)", y = "Fuel Efficiency (nm per kWh)") +
+  theme_minimal()
+```
+
+```{r}
+ship_data <- ship_data %>%
+  mutate(Profit = Revenue_per_Voyage_USD - Operational_Cost_USD)
+
+optimal_speed <- ship_data %>%
+  group_by(Speed_Over_Ground_knots) %>%
+  summarise(avg_profit = mean(Profit, na.rm = TRUE)) %>%
+  filter(avg_profit == max(avg_profit)) %>%
+  pull(Speed_Over_Ground_knots)
+
+ggplot(ship_data, aes(x = Speed_Over_Ground_knots, y = Profit)) +
+  geom_smooth(method = "loess", se = FALSE, size = 1, color = "green") +
+  geom_vline(xintercept = optimal_speed, linetype = "dashed", color = "blue") +
+  annotate("text", x = optimal_speed, y = max(ship_data$Profit) * 0.9,
+           label = paste("Optimal Speed =", round(optimal_speed, 2), "knots"),
+           color = "blue") +
+  labs(title = "Optimal Speed for Maximum Profit",
+       x = "Speed (knots)", y = "Profit (USD)") +
+  theme_minimal()
+```
+
+```{r}
+ship_data <- ship_data %>%
+  mutate(Profit = Revenue_per_Voyage_USD - Operational_Cost_USD)
+
+ship_data <- ship_data %>%
+  mutate(Profit_Cost_Ratio = Profit / Operational_Cost_USD)
+
+ggplot(ship_data, aes(x = Speed_Over_Ground_knots, y = Profit_Cost_Ratio)) +
+  geom_smooth(method = "loess", color = "purple", se = FALSE) +
+  labs(title = "Profit-to-Cost Ratio vs Speed",
+       x = "Speed (knots)", y = "Profit-to-Cost Ratio") +
+  theme_minimal()
+```
+
+🛎️ Insight:
+
+Based on the analysis, there is minimal direct correlation between speed, fuel efficiency, operational cost, and cargo weight, indicating that linear relationships alone do not explain ship performance. The optimal speed for maximum profit is approximately 10.44 knots, beyond which profit declines due to rising costs. Fuel efficiency remains relatively stable across ship types, but tankers show the strongest correlation with speed. To optimize operations, a dynamic speed adjustment strategy should be adopted, balancing cost, fuel efficiency, and profitability while integrating weather and route conditions.
+
+### 4.2 Ship operation: How do different ship types (Ship_Type) perform on different routes (Route_Type)?
+
+```{r}
+ship_efficiency_summary <- ship_data %>%
+  group_by(Ship_Type, Route_Type) %>%
+  summarise(
+    mean_efficiency = mean(Efficiency_nm_per_kWh, na.rm = TRUE),
+    sd_efficiency = sd(Efficiency_nm_per_kWh, na.rm = TRUE),
+  )
+
+pa <- ggplot(ship_efficiency_summary, aes(x = Ship_Type, y = mean_efficiency, fill = Route_Type)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_errorbar(
+    aes(ymin = mean_efficiency - sd_efficiency, ymax = mean_efficiency + sd_efficiency),
+    position = position_dodge(0.9), width = 0.2
+  ) +
+  labs(
+    title = "Mean Fuel Efficiency by Ship Type and Route",
+    x = "Ship Type", y = "Mean Efficiency (nm per kWh)"
+  ) +
+  theme_minimal()
+
+print(pa)
+```
+
+-   Compare the variation of operating costs (Operational_Cost_USD) for different ship types and routes.
+
+```{r}
+ggplot(ship_data, aes(x = Ship_Type, y = Operational_Cost_USD, fill = Route_Type)) +
+  geom_bar(stat = "identity", position = "dodge") +  
+  geom_point(aes(y = Efficiency_nm_per_kWh * 100000), color = "black", size = 2, position = position_dodge(width = 0.9)) +  
+  scale_y_continuous(
+    sec.axis = sec_axis(~./100000, name = "Fuel Efficiency (nm per kWh)")
+  ) +  
+  labs(title = "Operational Cost & Fuel Efficiency by Ship Type and Route",
+       x = "Ship Type", y = "Operational Cost (USD)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+-   Unit operating cost vs ship type & Route.
+
+```{r}
+pb <- ship_data <- ship_data %>%
+  mutate(Cost_per_Nautical_Mile = Operational_Cost_USD / Distance_Traveled_nm)
+
+ggplot(ship_data, aes(x = Ship_Type, y = Cost_per_Nautical_Mile, fill = Route_Type)) +
+  geom_bar(stat = "summary", fun = mean, position = "dodge") + 
+  labs(title = "Operational Cost per Nautical Mile by Ship Type and Route",
+       x = "Ship Type", y = "Cost per Nautical Mile (USD)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+```
+
+-   The Mean Turnaround Time (mean turnaround time) was calculated to help analyze the turnaround efficiency of different ship types on different routes.
+
+```{r}
+pc <- ggplot(ship_data, aes(x = Ship_Type, y = Turnaround_Time_hours, fill = Route_Type)) +
+  geom_boxplot(outlier.shape = NA, alpha = 0.6) + 
+  stat_summary(fun = mean, geom = "point", color = "red", size = 3) + 
+  labs(title = "Mean Turnaround Time by Ship Type and Route",
+       x = "Ship Type", y = "Turnaround Time (Hours)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+```
+
+-   The Mean Profit-Cost Ratio is marked with the mean of the scatter chart to help identify the profitability of different ship types on different routes.
+
+```{r}
+mean_data <- ship_data %>%
+  group_by(Ship_Type) %>%
+  summarise(Mean_Profit = mean(Profit_Cost_Ratio, na.rm = TRUE), .groups = "drop")
+
+p <- plot_ly() %>%
+  add_trace(
+    data = ship_data,
+    x = ~Ship_Type, 
+    y = ~Profit_Cost_Ratio, 
+    color = ~Route_Type, 
+    type = "scatter", 
+    mode = "markers",
+    text = ~paste("Ship Type:", Ship_Type, "<br>",
+                  "Route:", Route_Type, "<br>",
+                  "Profit-Cost Ratio:", round(Profit_Cost_Ratio, 2)),
+    hoverinfo = "text",
+    marker = list(opacity = 0.5)
+  ) %>%
+  add_trace(
+    data = mean_data,
+    x = ~Ship_Type,
+    y = ~Mean_Profit,
+    type = "scatter",
+    mode = "markers+text",
+    text = ~paste("Mean:", round(Mean_Profit, 2)), 
+    textposition = "top center",
+    marker = list(symbol = "diamond", size = 8, color = "black"), 
+    name = "Mean Profitability",
+    hoverinfo = "text"
+  ) %>%
+  layout(
+    title = "Profitability Ratio by Ship Type and Route",
+    xaxis = list(title = "Ship Type"),
+    yaxis = list(title = "Profit-Cost Ratio"),
+    legend = list(title = list(text = "Route Type"))
+  )
+
+p
+```
+
+```{r}
+grid.arrange(pa, pc, ncol = 1)
+```
+
+🛎️ Insight:
+
+Based on the analysis, fuel efficiency varies across ship types and routes, with container ships and fish carriers being more stable, while tankers show lower efficiency. Operational costs remain high across all routes, with no strong correlation between cost and fuel efficiency, indicating other influencing factors. Turnaround times are longer for long-haul and transoceanic routes, especially for bulk carriers and tankers. Profitability is highest for bulk carriers on short-haul routes, while tankers and container ships have stable but lower margins. Optimizing speed, route planning, and cost management can enhance efficiency and profitability.
+
+### Task 4.3: Weather Impact on Fuel Efficiency or not ？
+
+-   Calculate fuel efficiency averages for different weather conditions and plot error bars
+
+```{r}
+weather_efficiency_summary <- ship_data %>%
+  group_by(Weather_Condition) %>%
+  summarise(
+    mean_efficiency = mean(Efficiency_nm_per_kWh, na.rm = TRUE),
+    sd_efficiency = sd(Efficiency_nm_per_kWh, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+ggplot(weather_efficiency_summary, aes(x = Weather_Condition, y = mean_efficiency, fill = Weather_Condition)) +
+  geom_bar(stat = "identity", alpha = 0.7) +
+  geom_errorbar(aes(ymin = mean_efficiency - sd_efficiency, ymax = mean_efficiency + sd_efficiency),
+                width = 0.2) +
+  labs(title = "Fuel Efficiency across Different Weather Conditions",
+       x = "Weather Condition", y = "Mean Efficiency (nm per kWh)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+```
+
+```{r}
+ggplot(ship_data, aes(x = Weather_Condition, y = Speed_Over_Ground_knots, fill = Ship_Type)) +
+  geom_boxplot(outlier.shape = NA, alpha = 0.6) +  
+  geom_jitter(aes(color = Ship_Type), width = 0.2, alpha = 0.3) + 
+  facet_wrap(~ Ship_Type, scales = "free_y") +
+  labs(title 
+       = "Speed Distribution Across Different Weather Conditions",
+       x = "Weather Condition",
+       y = "Speed (knots)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+```{r}
+ship_data <- ship_data %>%
+  mutate(Month = format(as.Date(Date), "%m"))
+
+monthly_cost_summary <- ship_data %>%
+  group_by(Month) %>%
+  summarise(mean_cost = mean(Operational_Cost_USD, na.rm = TRUE),
+            sd_cost = sd(Operational_Cost_USD, na.rm = TRUE),
+            .groups = "drop")
+
+ggplot(monthly_cost_summary, aes(x = Month, y = mean_cost, group = 1)) +
+  geom_line(color = "blue", size = 1) +  
+  geom_point(size = 3, color = "red") +  
+  geom_errorbar(aes(ymin = mean_cost - sd_cost, ymax = mean_cost + sd_cost), width = 0.2) +
+  labs(title = "Monthly Operational Cost Trend",
+       x = "Month", y = "Mean Operational Cost (USD)") +
+  theme_minimal()
+```
+
+```{r}
+monthly_weather_cost <- ship_data %>%
+  group_by(Month, Weather_Condition) %>%
+  summarise(mean_cost = mean(Operational_Cost_USD, na.rm = TRUE), .groups = "drop")
+
+ggplot(monthly_weather_cost, aes(x = Month, y = mean_cost, fill = Weather_Condition)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Monthly Operational Cost by Weather Condition",
+       x = "Month", y = "Mean Operational Cost (USD)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
+```{r}
+weather_cost_summary <- ship_data %>%
+  group_by(Weather_Condition) %>%
+  summarise(
+    mean_cost = mean(Operational_Cost_USD, na.rm = TRUE),
+    sd_cost = sd(Operational_Cost_USD, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+ggplot(weather_cost_summary, aes(x = Weather_Condition, y = mean_cost, fill = Weather_Condition)) +
+  geom_bar(stat = "identity", alpha = 0.7) +
+  geom_errorbar(aes(ymin = mean_cost - sd_cost, ymax = mean_cost + sd_cost), width = 0.2) +
+  labs(title = "Operational Cost Across Different Weather Conditions",
+       x = "Weather Condition", y = "Mean Operational Cost (USD)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
+```{r}
+anova_result <- aov(Operational_Cost_USD ~ Weather_Condition, data = ship_data)
+summary(anova_result)
+
+```
+
+🛎️ Insight:
+
+Based on the analysis, **different weather conditions have a limited impact on fuel efficiency (Efficiency_nm_per_kWh)**. The **boxplots and mean error bars** show minimal variation in fuel efficiency across weather conditions. Further validation using **ANOVA** reveals a **p-value of 0.204**, which is greater than 0.05, indicating that the effect of weather on operational cost is **not statistically significant**. This suggests that **fuel efficiency is more influenced by ship type, speed, cargo weight, and operational strategies rather than weather conditions**. It is recommended to further analyze **speed optimization and operational adjustments** to improve fuel consumption efficiency rather than focusing on weather-related factors.
+
+## 5.Summary
+
+In this analysis,different ship types (Ship_Type) and routes (Route_Type) have minimal impact on fuel efficiency, but tankers show a stronger correlation between speed and fuel efficiency. Operational costs (Operational_Cost_USD) are higher for long-haul and transoceanic routes, though weather conditions do not significantly affect costs. Some routes exhibit higher cost per nautical mile, indicating potential inefficiencies. Turnaround time is longest for transoceanic routes, possibly affecting operational efficiency. To optimize performance, companies should refine route planning, implement dynamic speed adjustment strategies, and further investigate the impact of weather on specific routes.

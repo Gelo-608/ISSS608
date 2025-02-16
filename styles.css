@@ -1,1 +1,93 @@
 /* css styles */
+body {
+    font-family: 'Noto Sans', sans-serif;
+    background-color: #F8F9FA; 
+    color: #3A506B;
+}
+
+
+h1, h2, h3 {
+    font-family: 'Playfair Display', serif;
+    color: #2A3D5F; 
+    text-shadow: none;
+    
+
+pre, code {
+    background-color: #FFFFF7 !important; 
+    color: #3A506B !important; 
+    border-radius: 8px; 
+    padding: 12px;
+    font-size: 15px;
+    overflow-x: auto;
+}
+
+
+pre .copy-button {
+    background-color: rgba(58, 80, 107, 0.3) !important;
+    color: #2A3D5F !important;
+    font-size: 12px !important; 
+    padding: 3px 8px !important;
+    border-radius: 5px;
+    position: absolute;
+    right: 10px;
+    top: 5px;
+}
+pre .copy-button:hover {
+    background-color: rgba(58, 80, 107, 0.6) !important;
+}
+
+
+a {
+    color: #3A78C2; 
+    font-weight: bold;
+    text-decoration: none;
+}
+a:hover {
+    color: #1E58A4; 
+}
+
+
+.toc-title {
+    color: #2A3D5F;
+}
+.toc a {
+    color: #3A78C2 !important;
+}
+.toc a:hover {
+    color: #1E58A4 !important;
+}
+
+
+.navbar {
+    background-color: #EAF2F8 !important;
+    border-bottom: 2px solid #3A78C2;
+    border-radius: 12px;
+}
+.navbar a {
+    color: #2A3D5F !important;
+    font-weight: bold;
+    font-size: 18px;
+}
+.navbar a:hover {
+    color: #1E58A4 !important;
+}
+
+img {
+    border-radius: 10px;
+    border: 3px solid #3A78C2;
+    box-shadow: 3px 3px 10px rgba(58, 120, 194, 0.3);
+}
+
+button {
+    background: linear-gradient(to bottom, #3A78C2, #1E58A4);
+    color: white;
+    padding: 10px 20px;
+    font-size: 14px;
+    border-radius: 8px;
+    border: none;
+    transition: all 0.3s ease-in-out;
+}
+button:hover {
+    background: linear-gradient(to bottom, #1E58A4, #3A78C2);
+    transform: scale(1.05);
+}

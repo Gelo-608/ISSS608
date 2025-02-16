@@ -22,6 +22,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -158,6 +192,10 @@ ul.task-list li input[type="checkbox"] {
     <a class="dropdown-item" href="../../In-class ex/In-class ex04/In-class ex04.html">
  <span class="dropdown-text">In-class Exercise 1</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../../In-class ex/In-class ex05/In-class ex05.html">
+ <span class="dropdown-text">In-class Exercise 2</span></a>
+  </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
@@ -192,8 +230,22 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#data-visualization-on-ship-performance-clustering-dataset" id="toc-data-visualization-on-ship-performance-clustering-dataset" class="nav-link active" data-scroll-target="#data-visualization-on-ship-performance-clustering-dataset">Data visualization on “<strong>Ship Performance Clustering Dataset</strong>”</a>
+  <ul class="collapse">
+  <li><a href="#import-data" id="toc-import-data" class="nav-link" data-scroll-target="#import-data">1. Import Data:</a>
+  <ul class="collapse">
+  <li><a href="#check-the-structure-of-data" id="toc-check-the-structure-of-data" class="nav-link" data-scroll-target="#check-the-structure-of-data">Check the structure of data:</a></li>
+  <li><a href="#data-cleansing" id="toc-data-cleansing" class="nav-link" data-scroll-target="#data-cleansing"><strong>Data cleansing</strong>:</a></li>
+  </ul></li>
+  <li><a href="#data-exploration" id="toc-data-exploration" class="nav-link" data-scroll-target="#data-exploration">2. Data exploration</a></li>
+  </ul></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -224,7 +276,7 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">February 1, 2025</p>
+      <p class="date-modified">February 16, 2025</p>
     </div>
   </div>
     
@@ -235,8 +287,141 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<section id="data-visualization-on-ship-performance-clustering-dataset" class="level1">
+<h1>Data visualization on “<strong>Ship Performance Clustering Dataset</strong>”</h1>
+<section id="import-data" class="level2">
+<h2 class="anchored" data-anchor-id="import-data">1. Import Data:</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse,haven)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>ship_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"/Users/geloliu/Gelo-608/ISSS608/Take home Ex/Take-home_Ex1/data/Ship_Performance_Dataset.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="check-the-structure-of-data" class="level3">
+<h3 class="anchored" data-anchor-id="check-the-structure-of-data">Check the structure of data:</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(ship_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>spc_tbl_ [2,736 × 18] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
+ $ Date                   : Date[1:2736], format: "2023-06-04" "2023-06-11" ...
+ $ Ship_Type              : chr [1:2736] "Container Ship" "Fish Carrier" "Container Ship" "Bulk Carrier" ...
+ $ Route_Type             : chr [1:2736] "None" "Short-haul" "Long-haul" "Transoceanic" ...
+ $ Engine_Type            : chr [1:2736] "Heavy Fuel Oil (HFO)" "Steam Turbine" "Diesel" "Steam Turbine" ...
+ $ Maintenance_Status     : chr [1:2736] "Critical" "Good" "Fair" "Fair" ...
+ $ Speed_Over_Ground_knots: num [1:2736] 12.6 10.4 20.7 21.1 13.7 ...
+ $ Engine_Power_kW        : num [1:2736] 2063 1796 1649 915 1090 ...
+ $ Distance_Traveled_nm   : num [1:2736] 1031 1060 659 1127 1445 ...
+ $ Draft_meters           : num [1:2736] 14.13 14.65 7.2 11.79 9.73 ...
+ $ Weather_Condition      : chr [1:2736] "Moderate" "Rough" "Moderate" "Moderate" ...
+ $ Cargo_Weight_tons      : num [1:2736] 1959 162 178 1737 261 ...
+ $ Operational_Cost_USD   : num [1:2736] 483832 483388 448543 261350 287718 ...
+ $ Revenue_per_Voyage_USD : num [1:2736] 292183 883766 394019 87551 676121 ...
+ $ Turnaround_Time_hours  : num [1:2736] 25.9 63.2 49.4 22.4 64.2 ...
+ $ Efficiency_nm_per_kWh  : num [1:2736] 1.455 0.29 0.5 0.703 1.331 ...
+ $ Seasonal_Impact_Score  : num [1:2736] 1.416 0.886 1.406 1.371 0.583 ...
+ $ Weekly_Voyage_Count    : num [1:2736] 1 6 9 1 8 7 3 6 8 2 ...
+ $ Average_Load_Percentage: num [1:2736] 93.8 93.9 96.2 66.2 80 ...
+ - attr(*, "spec")=
+  .. cols(
+  ..   Date = col_date(format = ""),
+  ..   Ship_Type = col_character(),
+  ..   Route_Type = col_character(),
+  ..   Engine_Type = col_character(),
+  ..   Maintenance_Status = col_character(),
+  ..   Speed_Over_Ground_knots = col_double(),
+  ..   Engine_Power_kW = col_double(),
+  ..   Distance_Traveled_nm = col_double(),
+  ..   Draft_meters = col_double(),
+  ..   Weather_Condition = col_character(),
+  ..   Cargo_Weight_tons = col_double(),
+  ..   Operational_Cost_USD = col_double(),
+  ..   Revenue_per_Voyage_USD = col_double(),
+  ..   Turnaround_Time_hours = col_double(),
+  ..   Efficiency_nm_per_kWh = col_double(),
+  ..   Seasonal_Impact_Score = col_double(),
+  ..   Weekly_Voyage_Count = col_double(),
+  ..   Average_Load_Percentage = col_double()
+  .. )
+ - attr(*, "problems")=&lt;externalptr&gt; </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(ship_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      Date             Ship_Type          Route_Type        Engine_Type       
+ Min.   :2023-06-04   Length:2736        Length:2736        Length:2736       
+ 1st Qu.:2023-09-10   Class :character   Class :character   Class :character  
+ Median :2023-12-17   Mode  :character   Mode  :character   Mode  :character  
+ Mean   :2023-12-17                                                           
+ 3rd Qu.:2024-03-24                                                           
+ Max.   :2024-06-30                                                           
+ Maintenance_Status Speed_Over_Ground_knots Engine_Power_kW
+ Length:2736        Min.   :10.01           Min.   : 501   
+ Class :character   1st Qu.:13.93           1st Qu.:1148   
+ Mode  :character   Median :17.71           Median :1757   
+                    Mean   :17.60           Mean   :1758   
+                    3rd Qu.:21.28           3rd Qu.:2383   
+                    Max.   :25.00           Max.   :2999   
+ Distance_Traveled_nm  Draft_meters    Weather_Condition  Cargo_Weight_tons
+ Min.   :  50.43      Min.   : 5.002   Length:2736        Min.   :  50.23  
+ 1st Qu.: 548.51      1st Qu.: 7.437   Class :character   1st Qu.: 553.98  
+ Median :1037.82      Median : 9.919   Mode  :character   Median :1043.21  
+ Mean   :1036.41      Mean   : 9.929                      Mean   :1032.57  
+ 3rd Qu.:1540.93      3rd Qu.:12.413                      3rd Qu.:1527.72  
+ Max.   :1998.34      Max.   :14.993                      Max.   :1999.13  
+ Operational_Cost_USD Revenue_per_Voyage_USD Turnaround_Time_hours
+ Min.   : 10092       Min.   : 50352         Min.   :12.02        
+ 1st Qu.:131293       1st Qu.:290346         1st Qu.:26.17        
+ Median :257158       Median :520177         Median :41.59        
+ Mean   :255143       Mean   :521362         Mean   :41.75        
+ 3rd Qu.:381797       3rd Qu.:750073         3rd Qu.:57.36        
+ Max.   :499735       Max.   :999917         Max.   :71.97        
+ Efficiency_nm_per_kWh Seasonal_Impact_Score Weekly_Voyage_Count
+ Min.   :0.1002        Min.   :0.500         Min.   :1.000      
+ 1st Qu.:0.4636        1st Qu.:0.758         1st Qu.:3.000      
+ Median :0.7899        Median :1.009         Median :5.000      
+ Mean   :0.7987        Mean   :1.004         Mean   :4.915      
+ 3rd Qu.:1.1474        3rd Qu.:1.253         3rd Qu.:7.000      
+ Max.   :1.4993        Max.   :1.499         Max.   :9.000      
+ Average_Load_Percentage
+ Min.   : 50.01         
+ 1st Qu.: 62.70         
+ Median : 75.50         
+ Mean   : 75.22         
+ 3rd Qu.: 87.72         
+ Max.   :100.00         </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ship_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 18
+  Date       Ship_Type      Route_Type   Engine_Type          Maintenance_Status
+  &lt;date&gt;     &lt;chr&gt;          &lt;chr&gt;        &lt;chr&gt;                &lt;chr&gt;             
+1 2023-06-04 Container Ship None         Heavy Fuel Oil (HFO) Critical          
+2 2023-06-11 Fish Carrier   Short-haul   Steam Turbine        Good              
+3 2023-06-18 Container Ship Long-haul    Diesel               Fair              
+4 2023-06-25 Bulk Carrier   Transoceanic Steam Turbine        Fair              
+5 2023-07-02 Fish Carrier   Transoceanic Diesel               Fair              
+6 2023-07-09 Fish Carrier   Long-haul    Heavy Fuel Oil (HFO) Fair              
+# ℹ 13 more variables: Speed_Over_Ground_knots &lt;dbl&gt;, Engine_Power_kW &lt;dbl&gt;,
+#   Distance_Traveled_nm &lt;dbl&gt;, Draft_meters &lt;dbl&gt;, Weather_Condition &lt;chr&gt;,
+#   Cargo_Weight_tons &lt;dbl&gt;, Operational_Cost_USD &lt;dbl&gt;,
+#   Revenue_per_Voyage_USD &lt;dbl&gt;, Turnaround_Time_hours &lt;dbl&gt;,
+#   Efficiency_nm_per_kWh &lt;dbl&gt;, Seasonal_Impact_Score &lt;dbl&gt;,
+#   Weekly_Voyage_Count &lt;dbl&gt;, Average_Load_Percentage &lt;dbl&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="data-cleansing" class="level3">
+<h3 class="anchored" data-anchor-id="data-cleansing"><strong>Data cleansing</strong>:</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>ship_data <span class="ot">&lt;-</span> ship_data <span class="sc">%&gt;%</span> <span class="fu">drop_na</span>()</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>ship_data <span class="ot">&lt;-</span> ship_data <span class="sc">%&gt;%</span> <span class="fu">distinct</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="data-exploration" class="level2">
+<h2 class="anchored" data-anchor-id="data-exploration">2. Data exploration</h2>
+<pre><code></code></pre>
 
 
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

@@ -4,6 +4,10 @@ title: "ISSS608"
 
 ## Welcome to ISSS608 Visual Analytics and Applications
 
-In this website,you will find my coursework prepared for this course.
+This website serves as a collection of my coursework, assignments, and projects for ISSS608. Throughout this course, I explore various **data visualization techniques, analytical frameworks, and interactive tools** to uncover insights from complex datasets. The focus is on transforming raw data into meaningful visual narratives that drive decision-making.
+
+Here, you'll find **hands-on exercises, case studies, and key takeaways** from my learning journey. The course covers topics such as **exploratory data analysis, statistical graphics, interactive dashboards, and geospatial visualization**, equipping me with the skills to analyze and present data effectively.
+
+By integrating **data storytelling with advanced visualization methods**, this course enhances my ability to **interpret patterns, detect trends, and communicate findings clearly**. Feel free to browse through my coursework and see how visual analytics plays a crucial role in data-driven decision-making!
 
 ![](images/CN_1175684311.jpg)

@@ -1,97 +1,108 @@
 /* css styles */
-/* 🌿 Set the overall background and text color */
+/* 🌸 Make the background softer */
 body {
     font-family: 'Noto Sans', sans-serif;
-    background-color: #F8F9FA; /* Soft off-white */
-    color: #3A506B; /* Darker blue-gray for better readability */
+    background-color: #FDF6F9; /* Soft pinkish white */
+    color: #4A4A4A; /* Darker text for contrast */
 }
 
-/* ✨ Improve title readability */
+/* 🎀 Style the titles to be cuter */
 h1, h2, h3 {
     font-family: 'Playfair Display', serif;
-    color: #2A3D5F; /* Deep navy blue */
-    text-shadow: none; /* Remove excessive shadow */
+    color: #C77DFF; /* Soft purple */
+    text-shadow: 2px 2px 5px rgba(199, 125, 255, 0.2); /* Light glow effect */
+    border-bottom: 2px dashed #F4A5C2; /* Cute dashed underlines */
+    padding-bottom: 5px;
 }
 
-/* 🎨 Improve code block visibility */
-pre, code {
-    background-color: #FFFFF7 !important; /* Soft ivory background */
-    color: #3A506B !important; /* Darker text for readability */
-    border-radius: 8px; /* Rounded corners */
-    padding: 12px;
-    font-size: 15px;
-    overflow-x: auto;
-}
-
-/* 📌 Adjust the copy button size and position */
-pre .copy-button {
-    background-color: rgba(58, 80, 107, 0.3) !important;
-    color: #2A3D5F !important;
-    font-size: 12px !important;
-    padding: 3px 8px !important;
-    border-radius: 5px;
-    position: absolute;
-    right: 10px;
-    top: 5px;
-}
-pre .copy-button:hover {
-    background-color: rgba(58, 80, 107, 0.6) !important;
-}
-
-/* 🎛 Improve hyperlink visibility */
-a {
-    color: #3A78C2; /* Soft blue */
-    font-weight: bold;
-    text-decoration: none;
-}
-a:hover {
-    color: #1E58A4; /* Darker blue on hover */
-}
-
-/* 📖 Improve sidebar readability */
-.toc-title {
-    color: #2A3D5F; /* Dark navy */
-}
-.toc a {
-    color: #3A78C2 !important; /* Sidebar links in blue */
-}
-.toc a:hover {
-    color: #1E58A4 !important; /* Darker blue on hover */
-}
-
-/* 🏛 Style the navigation bar */
+/* 🍬 Style the navigation bar to be rounder and cuter */
 .navbar {
-    background-color: #EAF2F8 !important; /* Soft blue-gray */
-    border-bottom: 2px solid #3A78C2;
-    border-radius: 12px;
+    background: linear-gradient(to right, #FFDEE9, #B5C6E0); /* Soft gradient */
+    border-bottom: 3px solid #F4A5C2;
+    border-radius: 15px; /* Rounded edges */
+    box-shadow: 2px 2px 10px rgba(244, 165, 194, 0.3);
 }
 .navbar a {
-    color: #2A3D5F !important;
+    color: #6A5ACD !important; /* Soft purple */
     font-weight: bold;
     font-size: 18px;
 }
 .navbar a:hover {
-    color: #1E58A4 !important;
+    color: #FF69B4 !important; /* Cute pink hover */
 }
 
-/* 🖼 Enhance image appearance */
-img {
-    border-radius: 10px;
-    border: 3px solid #3A78C2; /* Soft blue border */
-    box-shadow: 3px 3px 10px rgba(58, 120, 194, 0.3);
-}
-
-/* 🎀 Improve button styling */
+/* 🎠 Add cute button styles */
 button {
-    background: linear-gradient(to bottom, #3A78C2, #1E58A4);
+    background: linear-gradient(to bottom, #FFC1CC, #FF69B4);
     color: white;
-    padding: 10px 20px;
-    font-size: 14px;
-    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 16px;
+    border-radius: 50px; /* Make it super round */
     border: none;
+    box-shadow: 3px 3px 10px rgba(255, 105, 180, 0.4);
     transition: all 0.3s ease-in-out;
 }
 button:hover {
-    background: linear-gradient(to bottom, #1E58A4, #3A78C2);
-    transform: scale(1.05);
+    background: linear-gradient(to bottom, #FF69B4, #FFC1CC);
+    transform: scale(1.1); /* Slight pop effect */
+}
+
+/* 🍭 Make the sidebar links cuter */
+.toc a {
+    color: #F48FB1 !important; /* Soft pink */
+}
+.toc a:hover {
+    color: #FF69B4 !important; /* Brighter pink */
+    text-shadow: 2px 2px 5px rgba(255, 105, 180, 0.4);
+}
+
+/* 🖼 Round images for a softer look */
+img {
+    border-radius: 20px;
+    border: 4px solid #FFB6C1; /* Light pink border */
+    box-shadow: 5px 5px 15px rgba(255, 182, 193, 0.3);
+    transition: transform 0.3s ease-in-out;
+}
+img:hover {
+    transform: translateY(-5px); /* Slight floating effect */
+}
+
+/* ✨ Add a cute floating animation */
+@keyframes floating {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-5px); }
+    100% { transform: translateY(0px); }
+}
+
+/* 🐰 Floating effect for important elements */
+h1, button {
+    animation: floating 3s infinite ease-in-out;
+}
+
+/* 🌟 Style the code blocks to be cuter */
+pre, code {
+    background-color: #FFF4F8 !important; /* Soft pink background */
+    color: #6A5ACD !important; /* Soft purple text */
+    border-radius: 12px;
+    padding: 12px;
+    font-size: 15px;
+    overflow-x: auto;
+    box-shadow: 3px 3px 8px rgba(106, 90, 205, 0.2);
+}
+
+/* 🎀 Make the copy button smaller & cuter */
+pre .copy-button {
+    background-color: rgba(255, 105, 180, 0.4) !important;
+    color: #6A5ACD !important;
+    font-size: 12px !important;
+    padding: 5px 10px !important;
+    border-radius: 10px;
+    position: absolute;
+    right: 10px;
+    top: 5px;
+    transition: all 0.3s ease-in-out;
+}
+pre .copy-button:hover {
+    background-color: rgba(255, 105, 180, 0.7) !important;
+    transform: scale(1.1);
 }

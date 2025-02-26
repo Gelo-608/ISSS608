@@ -2,7 +2,7 @@ project:
   type: website
 
 website:
-  title: "ISSS608 COURSEWORK"
+  title: "🐢"
   navbar:
     left:
     - text: "Hands-on Exercise"
@@ -33,7 +33,8 @@ website:
           href: "Hands-on Exercises/Hands-on Ex 05/Hands-on ex 5-3.html"
         - text: "Hands-on Exercise 5-4"
           href: "Hands-on Exercises/Hands-on Ex 05/Hands-on ex 5-4.html"
-          
+        - text: "Hands-on Exercise 7"
+          href: "Hands-on Exercises/Hands-on Ex 07/Hands-on ex 07.html"
           
     - text: "In-class Exercise"
       menu:
@@ -51,8 +52,9 @@ website:
           
     right:
     - href: index.qmd
-      text: Home
-    - "about.qmd"
+      text: 🏠
+    - href: about.qmd
+      text: 🥚
 
 
 

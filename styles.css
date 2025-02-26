@@ -1,52 +1,95 @@
 /* css styles */
 /* 🌿 Soft pastel watercolor background */
+/* Global Background */
 body {
-    font-family: 'Noto Sans', sans-serif;
-    background: radial-gradient(circle, rgba(255, 209, 220, 0.7) 30%, rgba(192, 217, 255, 0.7) 70%);
-    background-attachment: fixed; /* Ensures it doesn’t break across sections */
-    background-size: cover;
-    color: #4A4A4A; /* Standard dark gray for readability */
+    background-color: #F6F0ED; /* Soft warm beige-pink */
+    color: #625A56; /* Muted taupe-gray for readability */
+    font-family: "Arial", sans-serif;
 }
 
-/* 🎀 Soft pink titles */
-h1, h2, h3 {
-    color: #FF80A0; /* Soft pink */
-}
-
-/* 🏛 Navbar with pastel blue text */
+/* Navbar */
 .navbar {
-    background: linear-gradient(to right, rgba(245, 208, 214, 0.9), rgba(191, 214, 246, 0.9)); /* Soft pink to baby blue */
-    border-bottom: 2px solid #A1B6E5;
-    border-radius: 12px; /* Rounded edges */
-    box-shadow: 2px 2px 10px rgba(175, 180, 200, 0.2);
+    background-color: #DFC5C1; /* Muted dusty rose */
+    color: white;
+    border-radius: 0px 0px 12px 12px;
 }
-.navbar a {
-    color: #7EA8DE !important; /* Soft blue */
+
+/* Sidebar */
+.sidebar {
+    background-color: #EADCD5; /* Soft warm blush */
+    border-radius: 10px;
+}
+
+/* Sidebar & TOC Links */
+.sidebar a, .toc a {
+    color: #9B8885 !important; /* Warm taupe */
+    text-decoration: none;
+}
+
+.sidebar a:hover, .toc a:hover {
+    color: #C89B9B !important; /* Soft desaturated pink */
+    text-decoration: underline;
+}
+
+/* Active TOC Item */
+.sidebar .active {
+    color: #B88E8E !important; /* Muted warm pink */
     font-weight: bold;
-    font-size: 18px;
-}
-.navbar a:hover {
-    color: #FF80A0 !important; /* Soft pink on hover */
 }
 
-/* 🍭 Sidebar (TOC) with soft blue links */
-.toc-title {
-    color: #7EA8DE; /* Soft blue */
-}
-.toc a {
-    color: #7EA8DE !important; /* Soft blue */
-}
-.toc a:hover {
-    color: #FF80A0 !important; /* Soft pink */
+/* Section Headers */
+h1, h2, h3 {
+    color: #A98B8B; /* Muted mauve-rose */
+    font-weight: bold;
 }
 
-/* 🖼 Softened image styles */
-img {
-    border-radius: 15px;
-    border: 3px solid #C1D7F5; /* Light blue border */
-    box-shadow: 3px 3px 10px rgba(200, 200, 220, 0.3);
-    transition: transform 0.3s ease-in-out;
+/* Buttons */
+button, .btn {
+    background-color: #D6BBC1; /* Balanced muted mauve-pink */
+    color: white;
+    border-radius: 12px;
 }
-img:hover {
-    transform: scale(1.02); /* Slight zoom effect */
+
+button:hover, .btn:hover {
+    background-color: #BFA3A8; /* Soft mauve-gray */
 }
+
+/* Tables */
+table {
+    background-color: #FFFFFF;
+}
+
+th {
+    background-color: #C7C3D0; /* Soft muted lavender */
+    color: white;
+}
+
+/* Active Menu Item */
+.nav-item.active {
+    background-color: #E3C6C6 !important; /* Soft dusty pink */
+    border-radius: 8px;
+}
+
+/* Sidebar (Remove Background) */
+.sidebar {
+    background-color: transparent !important; /* Removes the background */
+    border-radius: 10px;
+    padding: 15px;
+}
+
+/* TOC Sidebar Links */
+.sidebar a, .toc a {
+    color: #333333 !important; /* Black text */
+    text-decoration: none;
+    font-weight: normal;
+}
+
+/* TOC Sidebar Hover Effect */
+.sidebar a:hover, .toc a:hover {
+    color: #D19292 !important; /* Soft pastel pink */
+    text-decoration: underline;
+}
+
+
+
+

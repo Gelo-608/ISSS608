@@ -223,7 +223,9 @@ trade_summary_2024_top10 <- trade_summary_2024_clean %>%
   slice_head(n = 10)
 ```
 
-```{#| fig-height: 10}
+
+```{r}
+#| fig-height: 10
 #| fig-width: 12
 
 trade_summary_2024_top10$Country <- gsub("Republic of Korea", "Rep of Korea", trade_summary_2024_top10$Country)
@@ -315,22 +317,24 @@ label_directions <- list(
 
 for(i in 1:nrow(trade_summary_2024_top10)) {
   country <- trade_summary_2024_top10$Country[i]
-  x <- trade_summary_2024_top10$Exports_Bil[i]
-  y <- trade_summary_2024_top10$Imports_Bil[i]
-  trade_value <- round(trade_summary_2024_top10$Trade_Value_Bil[i], 1)
+  x <- trade_summary_2024_top10$Exports[i]
+  y <- trade_summary_2024_top10$Imports[i]
+  trade_value <- round(trade_summary_2024_top10$Total_Value[i], 1)
   growth_rate <- trade_summary_2024_top10$Annual_Growth_Rate[i]
-  
+
   growth_color <- ifelse(growth_rate >= 0, "#4CAF50", "#F44336")
-  
-  colors <- c("China" = "#7ECECA", "Malaysia" = "#8BBE65", 
-             "United States" = "#2F6D7A", "Taiwan" = "#E87A5D", 
-             "EU" = "#5C6BC0", "Hong Kong" = "#BA68C8", 
-             "Indonesia" = "#37474F", "Japan" = "#F9A825",
-             "Rep of Korea" = "#795548", "Thailand" = "#3F51B5")
-  
+
+  colors <- c(
+    "China" = "#7EECA4", "Malaysia" = "#8BBE65",
+    "United States" = "#2F6D7A", "Taiwan" = "#E87A5D",
+    "EU" = "#5C6BC0", "Hong Kong" = "#BA68C8",
+    "Indonesia" = "#37474F", "Japan" = "#F9A825",
+    "Rep of Korea" = "#795548", "Thailand" = "#3F51B5"
+  )
+
   color <- colors[country]
   if(is.na(color)) color <- "#888888"
-  
+
   dir <- label_directions[[country]]
   if(is.null(dir)) {
     dx <- 8
@@ -339,10 +343,13 @@ for(i in 1:nrow(trade_summary_2024_top10)) {
     dx <- dir$dx
     dy <- dir$dy
   }
-  
-  p <- p + geom_segment(x = x, y = y, xend = x + dx, yend = y + dy, 
-                       color = "gray50", size = 0.5, linetype = "dashed")
-  
+
+  p <- p + geom_segment(
+    aes(x = x, y = y, xend = x + dx, yend = y + dy),
+    color = "gray50", size = 0.5, linetype = "dashed"
+  )
+}
+
   p <- p + annotate("rect", 
                   xmin = x + dx - 6, 
                   xmax = x + dx + 6, 
@@ -391,6 +398,8 @@ p <- p + annotate("text", x = 2, y = max_value - 5,
 print(p)
 ```
 
+
+
 ### Data Visualisation Modification 3 (to be improved)
 
 Pros：
@@ -422,8 +431,78 @@ Use filter
 Sorting
 
 -   Ensure that high value goods are displayed first by arranging(desc(Total_Value)) in descending order of total trade value, so that you can analyse which categories contribute most to total trade.
+```{r}
+valid_commodities <- c(
+  "Machinery & Transport Equipment",
+  "Chemicals & Chemical Products",
+  "Miscellaneous Manufactured Articles",
+  "Manufactured Goods",
+  "Food & Live Animals",
+  "Animals & Vegetable Oils, Fats & Waxes",
+  "Beverages & Tobacco",
+  "Crude Materials (Excluding Fuels)",
+  "Miscellaneous (Excluding Oil Bunkers)"
+)
+
+trade_2024_filtered <- trade_2024 %>%
+  filter(Commodity %in% valid_commodities) %>%  
+  arrange(desc(Total_Value)) 
+
+print(trade_2024_filtered)
+
+```
 
 
+```{r}
+#| fig-height: 20
+#| fig-width: 18
+
+fig <- plot_ly(
+  trade_2024_filtered, 
+  labels = ~Commodity, 
+  values = ~Total_Value, 
+  type = 'pie',
+  
+  textposition = 'outside',
+  textinfo = 'label+percent',
+  outsidetextfont = list(size = 12, color = 'black'),
+  pull = 0.04,
+  
+  # Set colors and borders
+  marker = list(
+    line = list(color = '#FFFFFF', width = 1.5),
+    colors = colorRampPalette(c("#4472C4", "#ED7D31", "#A5A5A5", "#FFC000", "#5B9BD5", "#70AD47"))(length(unique(trade_2024_filtered$Commodity)))
+  ),
+  
+  hoverinfo = 'text',
+  text = ~paste0(
+    Commodity, 
+    "<br>值: ", formatC(Total_Value, format="f", big.mark=",", digits=0), 
+    "<br>占比: ", round(Total_Value/sum(Total_Value)*100, 1), "%"
+  )
+)
+
+fig <- fig %>% layout(
+  title = list(
+    text = "Non-Oil Merchandise Trade by Major Commodity Sections, 2024",
+    font = list(size = 16)
+  ),
+ 
+  showlegend = TRUE,
+  legend = list(
+    orientation = "h",  
+    xanchor = "center", 
+    x = 0.5,           
+    y = -0.1           
+  ),
+  margin = list(l = 20, r = 20, t = 50, b = 50)
+)
+
+fig
+```
+
+
+```
 
 ## Time-series analysis & Time-series forecasting methods
 

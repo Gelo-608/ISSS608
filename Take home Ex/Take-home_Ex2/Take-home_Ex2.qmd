@@ -10,7 +10,7 @@ author: "Gelo"
 -   Started
 
 ```{r}
-pacman::p_load(ggplot2,readxl, dplyr,tidyr,ggrepel,scales,plotly,stringr,ggrepel,gridExtra,grid,lubridate,forecast,vars,tsibble,tidyverse)
+pacman::p_load(ggplot2,readxl, dplyr,tidyr,ggrepel,scales,plotly,stringr,ggrepel,gridExtra,grid,lubridate,forecast,vars,tsibble,tidyverse,ggrepel)
 ```
 
 ### Data Visualisation Modification 1 (to be improved)
@@ -46,6 +46,13 @@ Use read_excel() to read the Excel file OutputFile.xlsx, select the T1 worksheet
 Since the raw data presents the year and month horizontally, it needs to be converted using pivot_longer() to make the data in Long Format (LF). Extract the year information from the Year_Month column and convert to numeric format. Filter only the data from 2020 to 2024 and convert Trade_Value to a numeric value. Data Aggregation:
 
 Filter ‘Total Merchandise Exports, (At Current Prices)’ and ‘Total Merchandise Imports, (At Current Prices)’ in the Data Series. Calculate the total exports and imports for each year and use pivot_wider() to convert the format to Exports and Imports respectively. Calculate Trade_Balance = Exports - Imports.
+
+```{r}
+#| fig-height: 12
+#| fig-width: 14
+
+```
+
 
 ```{r}
 trade_data_by_commodity_t1 <- read_excel("/Users/geloliu/Gelo-608/ISSS608/Take home Ex/Take-home_Ex2/data/OutputFile.xlsx",
@@ -228,11 +235,20 @@ trade_summary_2024_top10 <- trade_summary_2024_clean %>%
 #| fig-height: 10
 #| fig-width: 12
 
+trade_summary_2024_top10 <- trade_summary_2024_top10 %>%
+  mutate(
+    Exports = Exports / 1000,   
+    Imports = Imports / 1000,
+    Trade_Value = Trade_Value / 1000,
+    Trade_Balance = Trade_Balance / 1000
+  )
+
+
 trade_summary_2024_top10$Country <- gsub("Republic of Korea", "Rep of Korea", trade_summary_2024_top10$Country)
 
 max_value <- 120
 
-p <- ggplot(trade_summary_2024_top10, aes(x = Exports_Bil, y = Imports_Bil)) +
+p <- ggplot(trade_summary_2024_top10, aes(x = Exports, y = Imports)) +
   geom_polygon(data = data.frame(x = c(0, max_value, max_value), 
                                 y = c(0, 0, max_value)),
               aes(x = x, y = y), fill = "#e1f5e1", alpha = 0.6) +
@@ -242,7 +258,7 @@ p <- ggplot(trade_summary_2024_top10, aes(x = Exports_Bil, y = Imports_Bil)) +
   
   geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "gray50", alpha = 0.6) +
   
-  geom_point(aes(size = Trade_Value_Bil, fill = Country), 
+  geom_point(aes(size = Trade_Value, fill = Country), 
              shape = 21, color = "white", alpha = 0.9, stroke = 1.2) +
   
   geom_point(color = "white", size = 2) +
@@ -315,26 +331,25 @@ label_directions <- list(
   "Thailand" = list(dx = -10, dy = 0)
 )
 
+trade_summary_2024_top10$Growth_Rate <- (trade_summary_2024_top10$Trade_Balance / trade_summary_2024_top10$Trade_Value) * 100
+
 for(i in 1:nrow(trade_summary_2024_top10)) {
   country <- trade_summary_2024_top10$Country[i]
   x <- trade_summary_2024_top10$Exports[i]
   y <- trade_summary_2024_top10$Imports[i]
-  trade_value <- round(trade_summary_2024_top10$Total_Value[i], 1)
-  growth_rate <- trade_summary_2024_top10$Annual_Growth_Rate[i]
-
+  trade_value <- round(trade_summary_2024_top10$Trade_Value[i], 1)
+  growth_rate <- round(trade_summary_2024_top10$Growth_Rate[i], 1)
+  
   growth_color <- ifelse(growth_rate >= 0, "#4CAF50", "#F44336")
-
-  colors <- c(
-    "China" = "#7EECA4", "Malaysia" = "#8BBE65",
-    "United States" = "#2F6D7A", "Taiwan" = "#E87A5D",
-    "EU" = "#5C6BC0", "Hong Kong" = "#BA68C8",
-    "Indonesia" = "#37474F", "Japan" = "#F9A825",
-    "Rep of Korea" = "#795548", "Thailand" = "#3F51B5"
-  )
-
+  colors <- c("China" = "#7ECECA", "Malaysia" = "#8BBE65", 
+             "United States" = "#2F6D7A", "Taiwan" = "#E87A5D", 
+             "EU" = "#5C6BC0", "Hong Kong" = "#BA68C8", 
+             "Indonesia" = "#37474F", "Japan" = "#F9A825",
+             "Rep of Korea" = "#795548", "Thailand" = "#3F51B5")
+  
   color <- colors[country]
   if(is.na(color)) color <- "#888888"
-
+  
   dir <- label_directions[[country]]
   if(is.null(dir)) {
     dx <- 8
@@ -343,13 +358,10 @@ for(i in 1:nrow(trade_summary_2024_top10)) {
     dx <- dir$dx
     dy <- dir$dy
   }
-
-  p <- p + geom_segment(
-    aes(x = x, y = y, xend = x + dx, yend = y + dy),
-    color = "gray50", size = 0.5, linetype = "dashed"
-  )
-}
-
+  
+  p <- p + geom_segment(x = x, y = y, xend = x + dx, yend = y + dy, 
+                       color = "gray50", size = 0.5, linetype = "dashed")
+  
   p <- p + annotate("rect", 
                   xmin = x + dx - 6, 
                   xmax = x + dx + 6, 
@@ -387,7 +399,7 @@ for(i in 1:nrow(trade_summary_2024_top10)) {
                   x = x + dx, 
                   y = y + dy - 6, 
                   label = paste0("YoY: ", ifelse(growth_rate >= 0, "+", ""), growth_rate, "%"),
-                  color = growth_color, size = 3.2, fontface = "bold")
+                  color = growth_color, linewidth = 3.2, fontface = "bold")
 }
 
 p <- p + annotate("text", x = 2, y = max_value - 5, 
@@ -396,11 +408,11 @@ p <- p + annotate("text", x = 2, y = max_value - 5,
 
 
 print(p)
+
 ```
 
 
-
-### Data Visualisation Modification 3 (to be improved)
+Data Visualisation Modification 3 (to be improved)
 
 Pros：
 
@@ -431,7 +443,22 @@ Use filter
 Sorting
 
 -   Ensure that high value goods are displayed first by arranging(desc(Total_Value)) in descending order of total trade value, so that you can analyse which categories contribute most to total trade.
+
+
 ```{r}
+trade_data_long <- trade_data_by_commodity_t1 %>%
+  pivot_longer(cols = starts_with("2024"), names_to = "Month", values_to = "Trade_Value") %>%
+  mutate(
+    Trade_Value = as.numeric(gsub(",", "", Trade_Value)),  
+    Year = str_extract(Month, "20[0-9]{2}") 
+  ) %>%
+  filter(Year == "2024")  
+
+trade_2024 <- trade_data_long %>%
+  group_by(`Data Series`) %>%
+  summarise(Total_Value = sum(Trade_Value, na.rm = TRUE)) %>%
+  rename(Commodity = `Data Series`)
+
 valid_commodities <- c(
   "Machinery & Transport Equipment",
   "Chemicals & Chemical Products",
@@ -446,16 +473,17 @@ valid_commodities <- c(
 
 trade_2024_filtered <- trade_2024 %>%
   filter(Commodity %in% valid_commodities) %>%  
-  arrange(desc(Total_Value)) 
+  arrange(desc(Total_Value))
 
 print(trade_2024_filtered)
 
 ```
 
 
+
 ```{r}
 #| fig-height: 20
-#| fig-width: 18
+#| fig-width: 30
 
 fig <- plot_ly(
   trade_2024_filtered, 
@@ -477,8 +505,8 @@ fig <- plot_ly(
   hoverinfo = 'text',
   text = ~paste0(
     Commodity, 
-    "<br>值: ", formatC(Total_Value, format="f", big.mark=",", digits=0), 
-    "<br>占比: ", round(Total_Value/sum(Total_Value)*100, 1), "%"
+    "<br>: ", formatC(Total_Value, format="f", big.mark=",", digits=0), 
+    "<br>: ", round(Total_Value/sum(Total_Value)*100, 1), "%"
   )
 )
 
@@ -502,7 +530,6 @@ fig
 ```
 
 
-```
 
 ## Time-series analysis & Time-series forecasting methods
 

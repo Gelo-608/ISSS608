@@ -53,7 +53,6 @@ Filter ‘Total Merchandise Exports, (At Current Prices)’ and ‘Total Merchan
 
 ```
 
-
 ```{r}
 trade_data_by_commodity_t1 <- read_excel("/Users/geloliu/Gelo-608/ISSS608/Take home Ex/Take-home_Ex2/data/OutputFile.xlsx",
                                         sheet = "T1",
@@ -229,7 +228,6 @@ trade_summary_2024_top10 <- trade_summary_2024_clean %>%
   arrange(desc(Trade_Value)) %>%
   slice_head(n = 10)
 ```
-
 
 ```{r}
 #| fig-height: 10
@@ -411,7 +409,6 @@ print(p)
 
 ```
 
-
 Data Visualisation Modification 3 (to be improved)
 
 Pros：
@@ -443,7 +440,6 @@ Use filter
 Sorting
 
 -   Ensure that high value goods are displayed first by arranging(desc(Total_Value)) in descending order of total trade value, so that you can analyse which categories contribute most to total trade.
-
 
 ```{r}
 trade_data_long <- trade_data_by_commodity_t1 %>%
@@ -478,8 +474,6 @@ trade_2024_filtered <- trade_2024 %>%
 print(trade_2024_filtered)
 
 ```
-
-
 
 ```{r}
 #| fig-height: 20
@@ -528,8 +522,6 @@ fig <- fig %>% layout(
 
 fig
 ```
-
-
 
 ## Time-series analysis & Time-series forecasting methods
 

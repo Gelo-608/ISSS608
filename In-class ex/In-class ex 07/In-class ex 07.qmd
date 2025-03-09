@@ -1,0 +1,613 @@
+---
+title: "In-class ex 07"
+author: "Gelo"
+---
+
+# **19 Visualising, Analysing and Forecasting Time-series Data: tidyverts methods**
+
+## **19.1 Learning Outcome**
+
+By the end of this session, you will be able to:
+
+-   import and wrangling time-series data by using appropriate tidyverse methods,
+
+-   visualise and analyse time-series data,
+
+-   calibrate time-series forecasting models by using exponential smoothing and ARIMA techniques, and
+
+-   compare and evaluate the performance of forecasting models.
+
+## **19.2 Getting Started**
+
+For the purpose of this hands-on exercise, the following R packages will be used.
+
+```{r}
+pacman::p_load(tidyverse, tsibble, feasts, fable, seasonal)
+```
+
+-   [**lubridate**](https://lubridate.tidyverse.org/) provides a collection to functions to parse and wrangle time and date data.
+
+-   tsibble, feasts, fable and fable.prophet are belong to [**tidyverts**](https://tidyverts.org/), a family of tidy tools for time series data handling, analysis and forecasting.
+
+    -   [**tsibble**](https://tsibble.tidyverts.org/) provides a data infrastructure for tidy temporal data with wrangling tools. Adapting the tidy data principles, tsibble is a data- and model-oriented object.
+
+    -   [**feasts**](https://feasts.tidyverts.org/) provides a collection of tools for the analysis of time series data. The package name is an acronym comprising of its key features: Feature Extraction And Statistics for Time Series.
+
+### **19.2.1 Importing the data**
+
+First, `read_csv()` of **readr** package is used to import *visitor_arrivals_by_air.csv* file into R environment. The imported file is saved an tibble object called *ts_data*.
+
+```{r}
+ts_data <- read_csv(
+  "/Users/geloliu/Gelo-608/ISSS608/In-class ex/In-class ex 07/visitor_arrivals_by_air.csv")
+```
+
+In the code chunk below, `dmy()` of **lubridate** package is used to convert data type of Month-Year field from Character to Date.
+
+```{r}
+ts_data$`Month-Year` <- dmy(
+  ts_data$`Month-Year`)
+```
+
+### **19.2.2 Conventional base `ts` object versus `tibble` object**
+
+tibble object
+
+```{r}
+ts_data
+```
+
+### **19.2.3 Conventional base `ts` object versus `tibble` object**
+
+ts object
+
+```{r}
+ts_data_ts <- ts(ts_data)       
+head(ts_data_ts)
+```
+
+### **19.2.4 Converting `tibble` object to `tsibble`object**
+
+The code chunk below converting ts_data from tibble object into tsibble object by using [`as_tsibble()`](https://tsibble.tidyverts.org/reference/as-tsibble.html) of **tsibble** R package.
+
+```{r}
+ts_tsibble <- ts_data %>%
+  mutate(Month = yearmonth(`Month-Year`)) %>%
+  as_tsibble(index = `Month`)
+```
+
+What can we learn from the code chunk above? + [`mutate()`](https://r4va.netlify.app/chap19) of **dplyr**package is used to derive a new field by transforming the data values in Month-Year field into month-year format. The transformation is performed by using [`yearmonth()`](https://tsibble.tidyverts.org/reference/year-month.html) of **tsibble** package. + [`as_tsibble()`](https://tsibble.tidyverts.org/reference/as-tibble.html) is used to convert the tibble data frame into tsibble data frame.
+
+### **19.2.5 tsibble object**
+
+```{r}
+ts_tsibble
+```
+
+## **19.3 Visualising Time-series Data**
+
+In order to visualise the time-series data effectively, we need to organise the data frame from wide to long format by using [`pivot_longer()`](https://tidyr.tidyverse.org/reference/pivot_longer.html) of **tidyr** package as shown below.
+
+```{r}
+ts_longer <- ts_data %>%
+  pivot_longer(cols = c(2:34),
+               names_to = "Country",
+               values_to = "Arrivals")
+```
+
+### **19.3.1 Visualising single time-series: ggplot2 methods**
+
+```{r}
+ts_longer %>%
+  filter(Country == "Vietnam") %>%
+  ggplot(aes(x = `Month-Year`, 
+             y = Arrivals))+
+  geom_line(linewidth = 0.5)
+```
+
+-   [`filter()`](https://dplyr.tidyverse.org/reference/filter.html) of [**dplyr**](https://dplyr.tidyverse.org/) package is used to select records belong to Vietnam.
+
+-   [`geom_line()`](https://ggplot2.tidyverse.org/reference/geom_path.html) of [**ggplot2**](https://ggplot2.tidyverse.org/) package is used to plot the time-series line graph. \]
+
+### **19.3.2 Plotting multiple time-series data with ggplot2 methods**
+
+```{r}
+ggplot(data = ts_longer, 
+       aes(x = `Month-Year`, 
+           y = Arrivals,
+           color = Country))+
+  geom_line(linewidth = 0.5) +
+  theme(legend.position = "bottom", 
+        legend.box.spacing = unit(0.5, "cm"))
+```
+
+In order to provide effective comparison, [`facet_wrap()`](https://ggplot2.tidyverse.org/reference/facet_wrap.html) of **ggplot2**package is used to create small multiple line graph also known as trellis plot.
+
+```{r}
+#| echo: False
+#| fig-height: 12
+ggplot(data = ts_longer, 
+       aes(x = `Month-Year`, 
+           y = Arrivals))+
+  geom_line(linewidth = 0.5) +
+  facet_wrap(~ Country,
+             ncol = 3,
+             scales = "free_y") +
+  theme_bw()
+```
+
+## **19.4 Visual Analysis of Time-series Data**
+
+```{r}
+tsibble_longer <- ts_tsibble %>%
+  pivot_longer(cols = c(2:34),
+               names_to = "Country",
+               values_to = "Arrivals")
+```
+
+### **19.4.1 Visual Analysis of Seasonality with Seasonal Plot**
+
+```{r}
+tsibble_longer %>%
+  filter(Country == "Italy" |
+         Country == "Vietnam" |
+         Country == "United Kingdom" |
+         Country == "Germany") %>% 
+  gg_season(Arrivals)
+```
+
+### **19.4.2 Visual Analysis of Seasonality with Cycle Plot**
+
+```{r}
+tsibble_longer %>%
+  filter(Country == "Vietnam" |
+         Country == "Italy") %>% 
+  autoplot(Arrivals) + 
+  facet_grid(Country ~ ., scales = "free_y")
+```
+
+```{r}
+#| fig-height: 6
+tsibble_longer %>%
+  filter(Country == "Vietnam" |
+         Country == "Italy") %>% 
+  gg_subseries(Arrivals)
+```
+
+## **19.5 Time series decomposition**
+
+### **19.5.1 Single time series decomposition**
+
+In the code chunk below, `ACF()` of **feasts** package is used to plot the ACF curve of visitor arrival from Vietnam.
+
+```{r}
+tsibble_longer %>%
+  filter(`Country` == "Vietnam") %>%
+  ACF(Arrivals) %>% 
+  autoplot()
+```
+
+```{r}
+tsibble_longer %>%
+  filter(`Country` == "Vietnam") %>%
+  PACF(Arrivals) %>% 
+  autoplot()
+```
+
+### **19.5.2 Multiple time-series decomposition**
+
+```{r}
+tsibble_longer %>%
+  filter(`Country` == "Vietnam" |
+         `Country` == "Italy" |
+         `Country` == "United Kingdom" |
+         `Country` == "China") %>%
+  ACF(Arrivals) %>%
+  autoplot()
+```
+
+```{r}
+tsibble_longer %>%
+  filter(`Country` == "Vietnam" |
+         `Country` == "Italy" |
+         `Country` == "United Kingdom" |
+         `Country` == "China") %>%
+  PACF(Arrivals) %>%
+  autoplot()
+```
+
+### **19.5.3 Composite plot of time series decomposition**
+
+```{r}
+tsibble_longer %>%
+  filter(`Country` == "Vietnam") %>%
+  gg_tsdisplay(Arrivals)
+```
+
+## **19.6 Visual STL Diagnostics**
+
+### **19.6.1 Visual STL diagnostics with feasts**
+
+```{r}
+tsibble_longer %>%
+  filter(`Country` == "Vietnam") %>%
+  model(stl = STL(Arrivals)) %>%
+  components() %>%
+  autoplot()
+```
+
+### **19.6.2 Classical Decomposition with feasts**
+
+```{r}
+tsibble_longer %>%
+  filter(`Country` == "Vietnam") %>%
+  model(
+    classical_decomposition(
+      Arrivals, type = "additive")) %>%
+  components() %>%
+  autoplot()
+```
+
+## **19.7 Visual Forecasting**
+
+### **19.7.1 Time Series Data Sampling**
+
+```{r}
+vietnam_ts <- tsibble_longer %>%
+  filter(Country == "Vietnam") %>% 
+  mutate(Type = if_else(
+    `Month-Year` >= "2019-01-01", 
+    "Hold-out", "Training"))
+```
+
+```{r}
+vietnam_train <- vietnam_ts %>%
+  filter(`Month-Year` < "2019-01-01")
+```
+
+### **19.7.2 Exploratory Data Analysis (EDA): Time Series Data**
+
+```{r}
+vietnam_train %>%
+  model(stl = STL(Arrivals)) %>%
+  components() %>%
+  autoplot()
+```
+
+### **19.7.3 Fitting forecasting models**
+
+#### 19.7.3.1 Fitting Exponential Smoothing State Space (ETS) Models: fable methods
+
+```{r}
+ETS(y ~ error(c("A", "M")) +
+      trend(c("N", "A", "Ad")) +
+      season(c("N", "A", "M")))
+```
+
+#### 19.7.3.2 Fitting a simple exponential smoothing (SES)
+
+```{r}
+fit_ses <- vietnam_train %>%
+  model(ETS(Arrivals ~ error("A") 
+            + trend("N") 
+            + season("N")))
+fit_ses
+```
+
+#### 19.7.3.3 Examine Model Assumptions
+
+```{r}
+gg_tsresiduals(fit_ses)
+```
+
+#### 19.7.3.4 The model details
+
+```{r}
+fit_ses %>%
+  report()
+```
+
+#### 19.7.3.5 Fitting ETS Methods with Trend: Holt’s Linear
+
+#### 19.7.3.6 Trend methods
+
+```{r}
+vietnam_H <- vietnam_train %>%
+  model(`Holt's method` = 
+          ETS(Arrivals ~ error("A") +
+                trend("A") + 
+                season("N")))
+vietnam_H %>% report()
+```
+
+#### 19.7.3.7 Damped Trend methods
+
+```{r}
+vietnam_HAd <- vietnam_train %>%
+  model(`Holt's method` = 
+          ETS(Arrivals ~ error("A") +
+                trend("Ad") + 
+                season("N")))
+vietnam_HAd %>% report()
+```
+
+#### 19.7.3.8 Checking for results
+
+```{r}
+gg_tsresiduals(vietnam_H)
+```
+
+```{r}
+gg_tsresiduals(vietnam_HAd)
+```
+
+### **19.7.4 Fitting ETS Methods with Season: Holt-Winters**
+
+```{r}
+Vietnam_WH <- vietnam_train %>%
+  model(
+    Additive = ETS(Arrivals ~ error("A") 
+                   + trend("A") 
+                   + season("A")),
+    Multiplicative = ETS(Arrivals ~ error("M") 
+                         + trend("A") 
+                         + season("M"))
+    )
+
+Vietnam_WH %>% report()
+```
+
+### **19.7.5 Fitting multiple ETS Models**
+
+```{r}
+fit_ETS <- vietnam_train %>%
+  model(`SES` = ETS(Arrivals ~ error("A") + 
+                      trend("N") + 
+                      season("N")),
+        `Holt`= ETS(Arrivals ~ error("A") +
+                      trend("A") +
+                      season("N")),
+        `damped Holt` = 
+          ETS(Arrivals ~ error("A") +
+                trend("Ad") + 
+                season("N")),
+        `WH_A` = ETS(
+          Arrivals ~ error("A") + 
+            trend("A") + 
+            season("A")),
+        `WH_M` = ETS(Arrivals ~ error("M") 
+                         + trend("A") 
+                         + season("M"))
+  )
+```
+
+### **19.7.6 The model coefficient**
+
+```{r}
+fit_ETS %>%
+  tidy()
+```
+
+### **19.7.7 Step 4: Model Comparison**
+
+```{r}
+fit_ETS %>% 
+  report()
+```
+
+### **19.7.8 Step 5: Forecasting future values**
+
+```{r}
+fit_ETS %>%
+  forecast(h = "12 months") %>%
+  autoplot(vietnam_ts, 
+           level = NULL)
+```
+
+### **19.7.9 Fitting ETS Automatically**
+
+```{r}
+fit_autoETS <- vietnam_train %>%
+  model(ETS(Arrivals))
+fit_autoETS %>% report()
+```
+
+### **19.7.10 Fitting Fitting ETS Automatically**
+
+```{r}
+gg_tsresiduals(fit_autoETS)
+```
+
+### **19.7.11 Forecast the future values**
+
+```{r}
+fit_autoETS %>%
+  forecast(h = "12 months") %>%
+  autoplot(vietnam_train)
+```
+
+### **19.7.12 Visualising AutoETS model with ggplot2**
+
+### **19.7.13 Visualising AutoETS model with ggplot2**
+
+```{r}
+fc_autoETS <- fit_autoETS %>%
+  forecast(h = "12 months")
+
+vietnam_ts %>%
+  ggplot(aes(x=`Month`, 
+             y=Arrivals)) +
+  autolayer(fc_autoETS, 
+            alpha = 0.6) +
+  geom_line(aes(
+    color = Type), 
+    alpha = 0.8) + 
+  geom_line(aes(
+    y = .mean, 
+    colour = "Forecast"), 
+    data = fc_autoETS) +
+  geom_line(aes(
+    y = .fitted, 
+    colour = "Fitted"), 
+    data = augment(fit_autoETS))
+```
+
+## **19.8 AutoRegressive Integrated Moving Average(ARIMA) Methods for Time Series Forecasting: fable (tidyverts) methods**
+
+### **19.8.1 Visualising Autocorrelations: feasts methods**
+
+```{r}
+vietnam_train %>%
+  gg_tsdisplay(plot_type='partial')
+```
+
+### **19.8.2 Visualising Autocorrelations: feasts methods**
+
+```{r}
+tsibble_longer %>%
+  filter(`Country` == "Vietnam") %>%
+  ACF(Arrivals) %>% 
+  autoplot()
+```
+
+```{r}
+tsibble_longer %>%
+  filter(`Country` == "United Kingdom") %>%
+  ACF(Arrivals) %>% 
+  autoplot()
+```
+
+```{r}
+tsibble_longer %>%
+  filter(`Country` == "United Kingdom") %>%
+  ACF(Arrivals) %>% 
+  autoplot()
+```
+
+### **19.8.3 Differencing: fable methods**
+
+#### 19.8.3.1 Trend differencing
+
+```{r}
+tsibble_longer %>%
+  filter(Country == "Vietnam") %>%
+  gg_tsdisplay(difference(
+    Arrivals,
+    lag = 1), 
+    plot_type='partial')
+```
+
+#### 19.8.3.2 Seasonal differencing
+
+```{r}
+tsibble_longer %>%
+  filter(Country == "Vietnam") %>%
+  gg_tsdisplay(difference(
+    Arrivals,
+    difference = 12), 
+    plot_type='partial')
+```
+
+### **19.8.4 Fitting ARIMA models manually: fable methods**
+
+```{r}
+fit_arima <- vietnam_train %>%
+  model(
+    arima200 = ARIMA(Arrivals ~ pdq(2,0,0)),
+    sarima210 = ARIMA(Arrivals ~ pdq(2,0,0) + 
+                        PDQ(2,1,0))
+    )
+report(fit_arima)
+```
+
+### **19.8.5 Fitting ARIMA models automatically: fable methods**
+
+```{r}
+fit_autoARIMA <- vietnam_train %>%
+  model(ARIMA(Arrivals))
+report(fit_autoARIMA)
+```
+
+### **19.8.6 Model Comparison**
+
+```{r}
+bind_rows(
+    fit_autoARIMA %>% accuracy(),
+    fit_autoETS %>% accuracy(),
+    fit_autoARIMA %>% 
+      forecast(h = 12) %>% 
+      accuracy(vietnam_ts),
+    fit_autoETS %>% 
+      forecast(h = 12) %>% 
+      accuracy(vietnam_ts)) %>%
+  select(-ME, -MPE, -ACF1)
+```
+
+### **19.8.7 Forecast Multiple Time Series**
+
+```{r}
+ASEAN <- tsibble_longer %>%
+  filter(Country == "Vietnam" |
+         Country == "Malaysia" |
+         Country == "Indonesia" |
+         Country == "Thailand" |
+         Country == "Philippines")
+```
+
+```{r}
+ASEAN_train <- ASEAN %>%
+  mutate(Type = if_else(
+    `Month-Year` >= "2019-01-01", 
+    "Hold-out", "Training")) %>%
+  filter(Type == "Training")
+```
+
+### **19.8.8 Fitting Mulltiple Time Series**
+
+```{r}
+ASEAN_fit <- ASEAN_train %>%
+  model(
+    ets = ETS(Arrivals),
+    arima = ARIMA(Arrivals)
+  )
+```
+
+### **19.8.9 Examining Models**
+
+```{r}
+ASEAN_fit %>%
+  glance()
+```
+
+### **19.8.10 Extracintg fitted and residual values**
+
+```{r}
+ASEAN_fit %>%
+  augment()
+```
+
+### **19.8.11 Comparing Fit Models**
+
+```{r}
+ASEAN_fit %>%
+  accuracy() %>%
+  arrange(Country)
+```
+
+### **19.8.12 Forecast Future Values**
+
+```{r}
+ASEAN_fc <- ASEAN_fit %>%
+  forecast(h = "12 months")
+```
+
+### **19.8.13 Visualising the forecasted values**
+
+```{r}
+ASEAN_fc %>%
+  autoplot(ASEAN)
+```
+
+## **19.9 Reference**
+
+Rob J Hyndman and George Athanasopoulos (2022) [**Forecasting: Principles and Practice (3rd ed)**](https://otexts.com/fpp3/), online version.

@@ -90,6 +90,23 @@ th {
     text-decoration: underline;
 }
 
+/* Change the background color of R code blocks */
+pre, code {
+    background-color: white !important;  /* Set code background to white */
+    color: black !important; /* Set text color to black to ensure readability */
+}
+
+/* Apply to specific classes in R Markdown or Quarto themes */
+pre.sourceCode, pre.r {
+    background-color: white !important;
+    color: black !important;
+}
+
+/* Apply to code blocks in Quarto or R Markdown */
+div.sourceCode pre {
+    background-color: white !important;
+    color: black !important;
+}
 
 
 

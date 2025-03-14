@@ -1,11 +1,11 @@
 ---
-title: "Hands-on ex 08-3"
+title: "Hands-on Ex 8-3"
 author: "Gelo"
 ---
 
 # **23  Analytical Mapping**
 
-## **23.1 Overview**
+## **23.1 Overview**
 
 ### **23.1.1 Objectives**
 

@@ -1,5 +1,6 @@
 ---
-title: "Hands-on Ex 08-1"
+title: "Hands-on Ex 8-1"
+author: "Gelo"
 ---
 
 # **21 Choropleth Mapping with R**

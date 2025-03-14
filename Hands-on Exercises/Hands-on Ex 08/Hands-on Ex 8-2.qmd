@@ -1,5 +1,5 @@
 ---
-title: "Hands-on ex 08-2"
+title: "Hands-on Ex 8-2"
 author: "Gelo"
 ---
 

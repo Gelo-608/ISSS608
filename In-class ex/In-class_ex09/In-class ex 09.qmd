@@ -1,0 +1,35 @@
+---
+title: "In-class ex 09"
+author: "Gelo"
+---
+
+```{r}
+pacman::p_load(igraph, tidygraph, ggraph, 
+               visNetwork, lubridate, clock,
+               tidyverse, graphlayouts)
+```
+
+\# import data
+
+```{r}
+GAStech_nodes <- read_csv("/Users/geloliu/Gelo-608/ISSS608/In-class ex/In-class_ex09/data-9/GAStech_email_node.csv")
+GAStech_edges <- read_csv("/Users/geloliu/Gelo-608/ISSS608//In-class ex/In-class_ex09/data-9/GAStech_email_edge-v2.csv")
+```
+
+```{r}
+GAStech_edges <- GAStech_edges %>%
+  mutate(SendDate = dmy(SentDate)) %>%
+  mutate(Weekday = wday(SentDate,
+                        label = TRUE,
+                        abbr = FALSE))
+```
+
+```{r}
+GAStech_edges_aggregated <- GAStech_edges %>%
+  filter(MainSubject == "Work related") %>%
+  group_by(source, target, Weekday) %>%
+    summarise(Weight = n()) %>%
+  filter(source!=target) %>%
+  filter(Weight > 1) %>%
+  ungroup()
+```

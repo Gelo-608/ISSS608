@@ -152,7 +152,7 @@ Two functions of **tidygraph** package can be used to create network objects, 
 
 -   *activate()* verb from **tidygraph** serves as a switch between tibbles for nodes and edges. All dplyr verbs applied to **tbl_graph** object are applied to the active tibble.
 
-    ![](images/Screenshot 2025-03-20 at 22.01.59.png)
+    ![](images/Screenshot%202025-03-20%20at%2022.01.59.png)
 
 <!-- -->
 

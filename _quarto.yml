@@ -53,7 +53,14 @@ website:
         - text: "In-class Exercise 1"
           href: "In-class ex/In-class ex04/In-class ex04.html"
         - text: "In-class Exercise 2"
-          href: "In-class ex/In-class ex05/In-class ex05.html"
+          href: "In-class ex/In-class ex05/In-class Ex05.html"
+        - text: "In-class Exercise 3"
+          href: "In-class ex/In-class ex07/In-class ex07.html"
+        - text: "In-class Exercise 4"
+          href: "In-class ex/In-class_Ex08/In-class_Ex08.html"
+        - text: "In-class Exercise 5"
+          href: "In-class ex/In-class_ex09/In-class ex 09.html"
+        
    
     - text: "Take home Exercise"
       menu:

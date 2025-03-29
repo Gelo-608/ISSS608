@@ -1,0 +1,14 @@
+---
+title: "In-class_Ex10"
+author: "Gelo"
+---
+
+```{r}
+data <- readRDS("/Users/geloliu/Gelo-608/ISSS608/In-class ex/In-class_Ex10/data/CoffeeChain.rds")
+
+```
+
+```{r}
+write.csv(data, "CoffeeChain.csv", row.names = FALSE)
+
+```

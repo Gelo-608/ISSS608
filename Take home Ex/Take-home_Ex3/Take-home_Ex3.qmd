@@ -1,0 +1,261 @@
+---
+title: "Take-home_Ex3"
+author: "Gelo"
+---
+
+## Project Description
+
+This module aims to show the weather trends (temperature, rainfall, wind speed) of various weather stations in Singapore on different time scales (daily, weekly, monthly) through an interactive time series line chart. The user can select the data of interest based on the station, time range and variables, and optionally select whether the monsoon period is bright or not to assist the observation of seasonal changes.
+
+## Data Description and Preparation
+
+The data set used for this project, station_data.rds, contains 15 variables recorded daily from 1 January 2019 by 10 automatic weather stations in Singapore, including:
+
+10 automatic weather stations:
+
+1.  Changi Marina Barrage
+
+2.  Ang Mo Kio
+
+3.  Clementi
+
+4.  Jurong (West)
+
+5.  Paya Lebar
+
+6.  Newton
+
+7.  Pasir
+
+8.  Panjang
+
+9.  Tai Seng
+
+10. Admiralty
+
+Dataset columns:
+
+-   Temperature: mean_temperature_c, maximum_temperature_c, minimum_temperature_c
+
+-   Rainfall:daily_rainfall_total_mm,the highest_30_min_rainfall_mm, the highest_60_min_rainfall_mm, the highest_120_min_rainfall_mm
+
+-   Wind speed: mean_wind_speed_km_h, max_wind_speed_km_h
+
+-   Time information: date
+
+-   station name: station
+
+## Data import and initial exploration
+
+-   Load the necessary R packages
+
+```{r}
+pacman::p_load(dplyr,lubridate,zoo,ggplot2,ggridges,geofacet)
+```
+
+-   Import the dataset
+
+```{r}
+dataset <- readRDS("/Users/geloliu/Gelo-608/ISSS608/Take home Ex/Take-home_Ex3/station_data.rds") 
+```
+
+-   View the structure of the data
+
+    ```{r}
+    str(dataset) 
+    ```
+
+-   Preview the data
+
+    ```{r}
+    head(dataset) 
+    ```
+
+## Overview
+
+### 🔧 Components and Packages Used
+
+This dashboard was built using the **Shiny** framework in R and integrates the following components:
+
+-   **UI Components**: `selectInput`, `dateRangeInput`, `checkboxInput`, `actionButton`, `tabBox`, `fluidRow`, `box`
+
+-   **Visualization Libraries**: `highcharter`, `ggplot2`, `ggridges`, `geofacet`, `leaflet`
+
+-   **Data Manipulation Libraries**: `dplyr`, `tidyr`, `lubridate`, `zoo`
+
+### 🧱 Data Preparation Steps
+
+Before visualizing the data, the following cleaning and transformation steps were performed:
+
+1.  **Missing Value Handling**:
+
+    -   Used `coalesce()` to merge alternative columns.
+
+    -   Applied `zoo::na.approx()` to perform linear interpolation and preserve time series structure.
+
+2.  **Aggregation**:
+
+    -   Aggregated values to daily, weekly, and monthly formats using `lubridate::floor_date()`.
+
+3.  **Derived Variables**:
+
+    -   Created a `weekday` variable to support time grouping.
+
+    -   Created `region` and `planning_area` groupings for geospatial visualizations.
+
+4.  **Output Format**:
+
+    -   The final cleaned data was saved as `station_data.rds` and used across modules.
+
+------------------------------------------------------------------------
+
+## Module 1: Line Chart – Weather Trends Over Time
+
+### 🌟 Objective
+
+Allows users to explore and compare weather trends across stations with optional seasonal overlays.
+
+⚖️ Process & Implementation
+
+1.  **User Input Controls**:
+
+    -   Variables: Temperature, Rainfall, Wind Speed
+
+    -   Stations: Single or multiple stations
+
+    -   Time Aggregation: Daily, Weekly, Monthly
+
+    -   Date Range Selector
+
+    -   Checkbox to toggle monsoon overlay
+
+    -   Action button: Update View
+
+2.  **Reactive Logic in Server**:
+
+    -   The selected variable name is mapped to its corresponding column name (e.g., "Temperature" maps to `mean_temperature_c`).
+
+    -   The dataset is filtered based on the user-selected stations and date range.
+
+    -   Aggregation is applied using `floor_date()` depending on whether the user selected weekly or monthly granularity.
+
+    -   Grouped by station and date to calculate mean values.
+
+3.  **Plotting**:
+
+    -   Chart generated using `highcharter::hchart()` for interactive plotting.
+
+    -   Monsoon bands added using `plotBands` to differentiate NE, SW, and Inter-monsoon periods.
+
+    -   The legend distinguishes between stations.
+
+4.  **Summary Table**:
+
+    -   Statistics such as min, max, mean, SD, and quartiles are calculated and displayed for the selected station(s) and variable.
+
+### 🎨 Monsoon Highlighting
+
+-   Added `plotBands` in Highcharts to overlay shaded bands for:
+
+    -   **Northeast Monsoon**: Dec–Mar
+
+    -   **Southwest Monsoon**: Jun–Sep
+
+    -   **Inter-monsoons**: Apr–May, Oct–Nov
+
+-   Custom RGBA colors for subtle seasonal shading
+
+### 📊 Screenshot Example
+
+![](images/linechart.png)
+
+------------------------------------------------------------------------
+
+## Module 2: Ridge Plot – Distribution by Station
+
+### 🌟 Objective
+
+This module shows the distribution and variability of weather variables across stations over time, using ridgeline plots.
+
+### ⚖️ Process & Implementation
+
+1.  **User Input Controls**:
+
+    -   Variables: Temperature, Rainfall, Wind Speed
+
+    -   Multiple stations
+
+    -   Time Aggregation
+
+    -   Date Range
+
+    -   Action button: Update View
+
+2.  **Reactive Server Pipeline**:
+
+    -   Selected variable is mapped similarly to Module 1.
+
+    -   Dataset is filtered and aggregated using `floor_date()`.
+
+    -   Interpolation is applied to missing values using `zoo::na.approx()` to retain continuity.
+
+3.  **Visualization**:
+
+    -   `ggplot2` + `ggridges::geom_density_ridges()` is used to draw ridgeline plots.
+
+    -   The x-axis represents the value of the selected variable, and y-axis is the station.
+
+    -   Each station's distribution is shown with color-filled density curves.
+
+4.  **Station-Level Summary**:
+
+    -   A textbox displays count, mean, SD, min/max, and quartiles per selected station.
+
+### 📊 Screenshot Examples
+
+![](images/all station ridge plot.png)
+![](images/two station ridge plot.png)
+
+![](images/ridge plot summary.png)
+
+------------------------------------------------------------------------
+
+## Module 3: Geofacet Grid – Station-Level Trends by Region
+
+### 🌟 Objective
+
+This module uses `geofacet` to display time series plots across all stations using a layout that mimics Singapore’s geography.
+
+### ⚖️ Process & Implementation
+
+1.  **User Input Controls**:
+
+    -   Two tab panels: "All Stations" and "Selected Stations"
+
+    -   Variables, Date Range, Aggregation Type, Station List
+
+    -   Action button: Update View
+
+2.  **Server Pipeline**:
+
+    -   Dataset is filtered by user inputs and aggregated like the other modules.
+
+    -   In "All Stations" mode, all 10 stations are shown; in "Selected Stations," only selected ones are drawn.
+
+3.  **Geofacet Plotting**:
+
+    -   Uses `facet_geo()` from `geofacet` package.
+
+    -   Each station is plotted in a grid position resembling its real-world location.
+
+    -   The y-axis shows variable values and x-axis represents date.
+
+### 📊 Screenshot Examples
+
+![](images/all station geofacet.png)
+
+![](images/three stations geofacet.png)
+
+------------------------------------------------------------------------
+
+This concludes the description of the three modules I implemented: Line Chart, Ridge Plot, and Geofacet. Each module is interactive, allows variable and station selection, and provides both visual and statistical output to aid user understanding of Singapore’s weather trends across time and geography.

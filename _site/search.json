@@ -1097,5 +1097,12 @@
     "title": "In-class_Ex10",
     "section": "",
     "text": "data &lt;- readRDS(\"/Users/geloliu/Gelo-608/ISSS608/In-class ex/In-class_Ex10/data/CoffeeChain.rds\")\n\n\nwrite.csv(data, \"CoffeeChain.csv\", row.names = FALSE)"
+  },
+  {
+    "objectID": "Take home Ex/Take-home_Ex3/Take-home_Ex3.html#shiny-project-description",
+    "href": "Take home Ex/Take-home_Ex3/Take-home_Ex3.html#shiny-project-description",
+    "title": "Take-home_Ex3",
+    "section": "",
+    "text": "This module aims to show the weather trends (temperature, rainfall, wind speed) of various weather stations in Singapore on different time scales (daily, weekly, monthly) through an interactive time series line chart. The user can select the data of interest based on the station, time range and variables, and optionally select whether the monsoon period is bright or not to assist the observation of seasonal changes."
   }
 ]

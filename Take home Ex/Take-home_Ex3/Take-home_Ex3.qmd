@@ -3,7 +3,7 @@ title: "Take-home_Ex3"
 author: "Gelo"
 ---
 
-## Project Description
+## Shiny Project Description
 
 This module aims to show the weather trends (temperature, rainfall, wind speed) of various weather stations in Singapore on different time scales (daily, weekly, monthly) through an interactive time series line chart. The user can select the data of interest based on the station, time range and variables, and optionally select whether the monsoon period is bright or not to assist the observation of seasonal changes.
 

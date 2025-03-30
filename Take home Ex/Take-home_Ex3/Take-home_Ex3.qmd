@@ -213,10 +213,9 @@ This module shows the distribution and variability of weather variables across s
 
 ### 📊 Screenshot Examples
 
-![](images/all station ridge plot.png)
-![](images/two station ridge plot.png)
+![](images/all%20station%20ridge%20plot.png) ![](images/two%20station%20ridge%20plot.png)
 
-![](images/ridge plot summary.png)
+![](images/ridge%20plot%20summary.png)
 
 ------------------------------------------------------------------------
 
@@ -252,9 +251,9 @@ This module uses `geofacet` to display time series plots across all stations usi
 
 ### 📊 Screenshot Examples
 
-![](images/all station geofacet.png)
+![](images/all%20station%20geofacet.png)
 
-![](images/three stations geofacet.png)
+![](images/three%20stations%20geofacet.png)
 
 ------------------------------------------------------------------------
 

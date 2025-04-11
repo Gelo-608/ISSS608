@@ -13,7 +13,7 @@ The data set used for this project, station_data.rds, contains 15 variables reco
 
 10 automatic weather stations:
 
-1.  Changi Marina Barrage
+1.  Changi
 
 2.  Ang Mo Kio
 

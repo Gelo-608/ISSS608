@@ -1054,7 +1054,7 @@
     "href": "Take home Ex/Take-home_Ex3/Take-home_Ex3.html#data-description-and-preparation",
     "title": "Take-home_Ex3",
     "section": "Data Description and Preparation",
-    "text": "Data Description and Preparation\nThe data set used for this project, station_data.rds, contains 15 variables recorded daily from 1 January 2019 by 10 automatic weather stations in Singapore, including:\n10 automatic weather stations:\n\nChangi Marina Barrage\nAng Mo Kio\nClementi\nJurong (West)\nPaya Lebar\nNewton\nPasir\nPanjang\nTai Seng\nAdmiralty\n\nDataset columns:\n\nTemperature: mean_temperature_c, maximum_temperature_c, minimum_temperature_c\nRainfall:daily_rainfall_total_mm,the highest_30_min_rainfall_mm, the highest_60_min_rainfall_mm, the highest_120_min_rainfall_mm\nWind speed: mean_wind_speed_km_h, max_wind_speed_km_h\nTime information: date\nstation name: station"
+    "text": "Data Description and Preparation\nThe data set used for this project, station_data.rds, contains 15 variables recorded daily from 1 January 2019 by 10 automatic weather stations in Singapore, including:\n10 automatic weather stations:\n\nChangi\nAng Mo Kio\nClementi\nJurong (West)\nPaya Lebar\nNewton\nPasir\nPanjang\nTai Seng\nAdmiralty\n\nDataset columns:\n\nTemperature: mean_temperature_c, maximum_temperature_c, minimum_temperature_c\nRainfall:daily_rainfall_total_mm,the highest_30_min_rainfall_mm, the highest_60_min_rainfall_mm, the highest_120_min_rainfall_mm\nWind speed: mean_wind_speed_km_h, max_wind_speed_km_h\nTime information: date\nstation name: station"
   },
   {
     "objectID": "Take home Ex/Take-home_Ex3/Take-home_Ex3.html#data-import-and-initial-exploration",
